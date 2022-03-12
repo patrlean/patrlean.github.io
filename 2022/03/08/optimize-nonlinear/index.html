@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="manifest" href="/images/manifest.json">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="本文首先回顾几种基本的非线性规划算法 然后整理求解混合整数约束非线性规划问题的文献 并且使用matlab进行算法实现 最后列举实际例子进行求解">
+<meta property="og:type" content="article">
+<meta property="og:title" content="非线性整数规划模型收纳箱">
+<meta property="og:url" content="http://example.com/2022/03/08/optimize-nonlinear/index.html">
+<meta property="og:site_name" content="PatrLean 的个人博客">
+<meta property="og:description" content="本文首先回顾几种基本的非线性规划算法 然后整理求解混合整数约束非线性规划问题的文献 并且使用matlab进行算法实现 最后列举实际例子进行求解">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/GoldenSectionSearch.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/steepest%20descent.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/newton_vs_desend.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/prob3.jpg">
+<meta property="article:published_time" content="2022-03-08T14:46:39.000Z">
+<meta property="article:modified_time" content="2022-03-11T13:36:30.845Z">
+<meta property="article:author" content="patrlean">
+<meta property="article:tag" content="非线性 整数规划 数学模型">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/patrlean/images/main/GoldenSectionSearch.png">
+
+<link rel="canonical" href="http://example.com/2022/03/08/optimize-nonlinear/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>非线性整数规划模型收纳箱 | PatrLean 的个人博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">PatrLean 的个人博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">blog connects us</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">5</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-札记">
+
+    <a href="/categories/%E6%9C%AD%E8%AE%B0/" rel="section"><i class="fa fa-fw fa-book"></i>札记</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/03/08/optimize-nonlinear/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatarSmall.png">
+      <meta itemprop="name" content="patrlean">
+      <meta itemprop="description" content="三得利只喝乌龙茶">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PatrLean 的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          非线性整数规划模型收纳箱
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-03-08 22:46:39" itemprop="dateCreated datePublished" datetime="2022-03-08T22:46:39+08:00">2022-03-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-03-11 21:36:30" itemprop="dateModified" datetime="2022-03-11T21:36:30+08:00">2022-03-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E5%AD%A6%E6%A8%A1%E5%9E%8B/" itemprop="url" rel="index"><span itemprop="name">数学模型</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/03/08/optimize-nonlinear/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/03/08/optimize-nonlinear/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote class="blockquote-left">
+本文首先回顾几种基本的非线性规划算法<br>
+然后整理求解混合整数约束非线性规划问题的文献<br>
+并且使用matlab进行算法实现<br>
+最后列举实际例子进行求解<br>
+</blockquote>
+<span id="more"></span>
+<h1><span id="无约束非线性规划模型">无约束非线性规划模型</span></h1>
+<h2><span id="黄金分割法-golden-section-method">黄金分割法 golden section method</span></h2>
+<ul>
+<li>任务目标 ：找一维函数极小值</li>
+<li>基本思想 ：步步紧逼，逐次缩小范围
+<ul>
+<li>设定搜索精度</li>
+<li>区间内部插入两个点，分其为三段。通过比较两个端点和插入的两个点的函数值大小，划分新的搜索区间</li>
+</ul>
+</li>
+<li>适用范围 ：一维函数，单峰函数<br>
+<img src="https://raw.githubusercontent.com/patrlean/images/main/GoldenSectionSearch.png" style="zoom:50%;" align="center"><br>
+link - <a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_42494773/article/details/83083287">一维搜索方法/黄金分割法（附matlab代码）</a></li>
+</ul>
+<p>如果目标函数不是一维怎么办？多维度目标函数我们能不能转换成一维搜索？</p>
+<h2><span id="最速下降法">最速下降法</span></h2>
+<ul>
+<li>任务目标 ：找多维函数极小值点</li>
+<li>基本思想 ：多维函数一维化（负梯度方向+一维搜索方法）
+<ul>
+<li>一维化过程（确定搜索方向） ：$P^{(i)}=-\nabla f(x)^{(i)}\rightarrow$ 第$i$次迭代的负梯度方向</li>
+<li>一维搜索（计算搜索步长） : $f(x^{(i)}+\lambda^{(i)}P^{(i)})=\underset {\lambda&gt;0}{\min}f(x^{(i)}-\lambda^{(i)}\nabla f(x)^{(i)})$</li>
+</ul>
+</li>
+<li>适用范围 ：目标函数容易求导，梯度方向收敛较快</li>
+</ul>
+<p>但是，负梯度方向不一定是函数值下降最快方向。因为每次迭代选择的梯度方向只是<strong>起始点</strong>的梯度方向，并不能反映起始点和终点之间其他点的梯度方向。<br><br>
+link - <a target="_blank" rel="noopener" href="https://blog.csdn.net/Timingspace/article/details/50963564">梯度下降法和最速下降法的细微差别</a><br>
+<img src="https://raw.githubusercontent.com/patrlean/images/main/steepest%20descent.png" style="zoom:50%;" div align="center/"><br>
+那么，考虑梯度的变化方向会不会加快收敛速度呢？</p>
+<h2><span id="牛顿法最速下降法-pro">牛顿法（最速下降法 pro）</span></h2>
+<p>牛顿法就是在最速下降法的基础上添加目标函数梯度的变化的影响，也就是Hessian矩阵。<br>
+$$f(x)\approx Q(x)=f(x)^{(k)}+\nabla {(f(x^{(k)})}^T(x-x^{(k)})+\frac{1}{2}(x-x^{(k)})^T\nabla ^2f(x^{(k)})(x-x^{(k)})$$<br>
+其中$\nabla ^2f(x)$是Hessian矩阵</p>
+<p>令 $\nabla Q(x)=0$，可以求解得到一个极小值点。<br>
+把这个极小值点作为下一次迭代点，直到小于精度时停止迭代。<br>
+<img src="https://raw.githubusercontent.com/patrlean/images/main/newton_vs_desend.jpg" style="zoom:100%;" align="center/"></p>
+<ul>
+<li>基本思想 ：最速下降法+Hessian矩阵</li>
+<li>适用范围 ：容易求得矩阵导数，容易求得Hessian矩阵</li>
+</ul>
+<h2><span id="模式搜索法">模式搜索法</span></h2>
+<p>上面介绍的几种方法都需要知道一阶或者二阶导数。如果求不到导数，或者目标函数是离散的，又怎么办呢？</p>
+<ul>
+<li>基本思想 ：多维问题一维化+每个维度左右尝试</li>
+<li>适用范围 : 离散问题，无法求导</li>
+</ul>
+<p>link - <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Pattern_search_(optimization)">wiki:模式搜索</a></p>
+<h1><span id="有约束非线性规划模型">有约束非线性规划模型</span></h1>
+<blockquote class="blockquote-center">
+旧问题的答案也是新问题的答案。<br>
+- Woz·G·Schwarld
+</blockquote>
+<p>有约束非线性规划模型一般数学形式：<br>
+$$ \min f(x),<br>
+s.t.\left {<br>
+\begin{aligned}<br>
+g_i(x) &amp; \geq 0&amp; i=0,1,…,m , \<br>
+h_i(x) &amp; = 0&amp; j=0,1,…,l \<br>
+\end{aligned}<br>
+\right.<br>
+$$<br>
+下面介绍的两种方法都是把有约束问题转化为无约束问题。</p>
+<ul>
+<li>外点罚函数法<br><br>
+将约束项添加进目标函数中。当解落在可行域外时，约束项陡增，迫使解落回可行域。</li>
+<li>内点罚函数法<br><br>
+仍然将约束项添加进目标函数中。但是这次所有解都在可行域中，一旦解接近范围边界，约束项就会陡增，迫使解始终在远离范围边界的可行域中迭代。</li>
+</ul>
+<p>link - <a target="_blank" rel="noopener" href="http://solmaz.eng.uci.edu/Teaching/MAE206/Lecture14.pdf">罚函数法</a></p>
+<h1><span id="混合整数非线性规划模型">混合整数非线性规划模型</span></h1>
+<h2><span id="非线性规划整数规划">非线性规划+整数规划</span></h2>
+<p>正如引言所说，旧问题的答案也是新问题的答案。<br>
+混合整数非线性规划模型可以是非线性+整数规划的叠加</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">整数规划</th>
+<th style="text-align:center">非线性规划</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">割平面法</td>
+<td style="text-align:center">罚函数法</td>
+</tr>
+<tr>
+<td style="text-align:center">分支定界法</td>
+<td style="text-align:center">可行方向法</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">投影梯度法</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">反应曲面法</td>
+</tr>
+</tbody>
+</table>
+<p>link - <a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_36342854/article/details/103737901">可行方向法</a><br><br>
+link - <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/369962096">投影梯度法</a><br><br>
+link - <a target="_blank" rel="noopener" href="https://blog.csdn.net/Randall_crow_J/article/details/106265961">复合形法</a><br><br>
+link - <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%BB%A3%E7%90%86%E6%A8%A1%E5%9E%8B">反应曲面等代理模型</a><br><br>
+根据乘法原理，我们最多可以得到8种混合整数非线性规划模型，尽管他们中有些并不合理。</p>
+<p>除此之外，各种启发式算法也可以用于求解混合整数非线性规划。</p>
+<h2><span id="遗传算法">遗传算法</span></h2>
+<p>link - <a target="_blank" rel="noopener" href="https://blog.csdn.net/u010451580/article/details/51178225">遗传算法</a></p>
+<h2><span id="模拟退火">模拟退火</span></h2>
+<p>link - <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/266874840">模拟退火</a></p>
+<h2><span id="粒子群优化">粒子群优化</span></h2>
+<p>link - <a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1424756">粒子群优化</a></p>
+<h2><span id="代理模型算法-surrogate-model">代理模型算法 surrogate model</span></h2>
+<p>link - <a target="_blank" rel="noopener" href="https://www.mathworks.com/help/gads/surrogateopt.html">代理模型</a></p>
+<h1><span id="matlab算法实现介绍">matlab算法实现介绍</span></h1>
+<h2><span id="代理模型-surrogateopt">代理模型 </span></h2>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[x,fval,exitflag] = surrogateopt(objconstr,____)</span><br></pre></td></tr></table></figure>
+<p>该算法在多个维度上搜索实值目标函数的全局最小值，受多种条件约束：</p>
+<ul>
+<li>目标函数 <code>objconstr.Favl</code></li>
+<li>边界  <code>lb</code> <code>ub</code>, 输入约束的下界和上界</li>
+<li>可选不等式线性约束 <code>A</code> <code>b</code>， 输入线性不等式约束</li>
+<li>可选等式线性约束 <code>Aeq</code> <code>beq</code>， 输入线性不等式约束</li>
+<li>可选整数约束 <code>intcon</code>， 输入为整数的变量的标号</li>
+<li>可选非线性不等式约束<code>obconstr.Ineq</code></li>
+</ul>
+<p>surrogateopt函数返回一个结构体</p>
+<ul>
+<li><code>x</code> 返回最小值点</li>
+<li><code>fval</code> 实数解处的目标函数值</li>
+<li><code>exitflag</code> 退出标志</li>
+</ul>
+<p>算法<br>
+surrogateopt重复执行这些步骤：</p>
+<ol>
+<li>MinSurrogatePoints 通过在边界内随机采样点来创建一组试验点，并在试验点处评估目标函数。</li>
+<li>通过在所有随机试验点内插径向基函数来创建目标函数的代理模型。</li>
+<li>创建一个评价函数，为代理项赋予一些权重，对与试验点的距离赋予一些权重。通过在现有点（自上次代理重置以来找到的最佳点）周围的区域中随机采样评价函数来定位评价函数的一个小值。使用这个称为自适应点的点作为新的试验点。</li>
+<li>在自适应点评估目标，并根据该点及其值更新代理。如果目标函数值远低于观察到的先前最佳（最低）值，则计算“成功”，否则计算“失败”。</li>
+<li>max(nvar,5)如果在失败 之前发生了 3 次成功，则向上更新样本分布的离散度，其中nvar是维数。max(nvar,5)如果失败发生在三个成功之前，则向下更新离散度。</li>
+<li>从步骤 3 继续，直到所有试验点都在MinSampleDistance评估点范围内。此时，通过丢弃代理中的所有自适应点来重置代理，重置量表，然后返回步骤 1 以创建MinSurrogatePoints 新的随机试验点进行评估。</li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://www.mathworks.com/help/gads/nonlinear-problem-integer-nonlinear-constraints.html">Solve Nonlinear Problem with Integer and Nonlinear Constraints</a></p>
+<h1><span id="一个栗子">一个栗子</span></h1>
+<p>$$<br>
+\max f(x)=26(x_1-1)^2+50x_2+60x_3,\<br>
+s.t.\left{<br>
+\begin{aligned}<br>
+10  \leq 12x_1+4x_2+18x_3\<br>
+20x_1+x_2+25x_3\leq 300\<br>
+10x_1^2+4x_2+3x_3^2\leq 100\<br>
+0\leq x_i\leq 20,i=1,2,3\<br>
+x_3\in \Bbb Z\<br>
+\end{aligned}<br>
+\right.<br>
+$$</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">clc;clear all;close all;</span><br><span class="line"><span class="comment">%% constrain</span></span><br><span class="line">intcon = <span class="number">3</span>;</span><br><span class="line">A = [<span class="number">-12</span> <span class="number">-4</span> <span class="number">-18</span>; <span class="number">20</span> <span class="number">1</span> <span class="number">25</span>];</span><br><span class="line">b = [ <span class="number">-10</span>;<span class="number">300</span>];</span><br><span class="line">lb = [<span class="number">0</span> , <span class="number">0</span> , <span class="number">0</span>];</span><br><span class="line">ub = [<span class="number">20</span> , <span class="number">20</span> , <span class="number">20</span>];</span><br><span class="line">[x,fval,exitflag] = surrogateopt(@objconstr,lb,ub,intcon,A,b);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span> = <span class="title">objconstr</span><span class="params">(x)</span></span></span><br><span class="line">f.Fval = -( <span class="number">26</span>*( x(<span class="number">1</span>) - <span class="number">1</span> )^<span class="number">2</span> + <span class="number">50</span>*x(<span class="number">2</span>) + <span class="number">60</span>*x(<span class="number">3</span>) );</span><br><span class="line">f.Ineq = <span class="number">10</span> * x(<span class="number">1</span>) ^ <span class="number">2</span> + <span class="number">4</span>*x(<span class="number">2</span>) + <span class="number">3</span> * x(<span class="number">3</span>)^<span class="number">2</span> <span class="number">-100</span>;</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<img src="https://raw.githubusercontent.com/patrlean/images/main/prob3.jpg" style="zoom:80%;" align="center">
+<p>最优解为：$[ 0; 20; 2 ]$</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E9%9D%9E%E7%BA%BF%E6%80%A7-%E6%95%B4%E6%95%B0%E8%A7%84%E5%88%92-%E6%95%B0%E5%AD%A6%E6%A8%A1%E5%9E%8B/" rel="tag"># 非线性 整数规划 数学模型</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/02/04/%E8%A7%A3%E5%86%B3hexo%E6%A1%86%E6%9E%B6%E4%B8%8Bnext%E4%B8%BB%E9%A2%98%E8%87%AA%E5%AE%9A%E4%B9%89%E4%BE%A7%E8%BE%B9%E6%A0%8F%E5%B0%8F%E5%9B%BE%E6%A0%87/" rel="prev" title="解决hexo框架下next主题自定义侧边栏小图标">
+      <i class="fa fa-chevron-left"></i> 解决hexo框架下next主题自定义侧边栏小图标
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">无约束非线性规划模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text">黄金分割法 golden section method</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.2.</span> <span class="nav-text">最速下降法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.3.</span> <span class="nav-text">牛顿法（最速下降法 pro）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.4.</span> <span class="nav-text">模式搜索法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">有约束非线性规划模型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">混合整数非线性规划模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.1.</span> <span class="nav-text">非线性规划+整数规划</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.2.</span> <span class="nav-text">遗传算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.3.</span> <span class="nav-text">模拟退火</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.4.</span> <span class="nav-text">粒子群优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.5.</span> <span class="nav-text">代理模型算法 surrogate model</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">matlab算法实现介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.1.</span> <span class="nav-text">代理模型 </span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">一个栗子</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="patrlean"
+      src="/images/avatarSmall.png">
+  <p class="site-author-name" itemprop="name">patrlean</p>
+  <div class="site-description" itemprop="description">三得利只喝乌龙茶</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/patrlean" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;patrlean" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom github"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/349361858" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;349361858" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom bilibili"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:patriiicabis@gmail.com" title="E-Mail → mailto:patriiicabis@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom Email"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_44634406" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_44634406" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom CSDN"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://music.163.com/#/user/home?id=588410069" title="NetEase Cloud Music → https:&#x2F;&#x2F;music.163.com&#x2F;#&#x2F;user&#x2F;home?id&#x3D;588410069" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom NetEaseCloudMusic"></i></a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">patrlean</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">16k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">14 分钟</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力激情猛烈爆炸驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : '7JF3q74Xi62JMViy5Bhc3uqJ-MdYXbMMI',
+      appKey     : 'c9puHAmapHdRf9e83usdLViq',
+      placeholder: "你好鸭!",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : 'https://7jf3q74x.api.lncldglobal.com'
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

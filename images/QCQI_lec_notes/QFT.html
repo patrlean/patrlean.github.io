@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="manifest" href="/images/manifest.json">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="量子傅里叶变换 &amp;mdash; pyQPanda  文档                                                                                                                                                 {&quot;ad_fr">
+<meta property="og:type" content="website">
+<meta property="og:title" content="PatrLean 的个人博客">
+<meta property="og:url" content="http://example.com/images/QCQI_lec_notes/QFT.html">
+<meta property="og:site_name" content="PatrLean 的个人博客">
+<meta property="og:description" content="量子傅里叶变换 &amp;mdash; pyQPanda  文档                                                                                                                                                 {&quot;ad_fr">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/QCQI_lec_notes/_images/QFT.png">
+<meta property="article:published_time" content="2022-03-10T11:51:46.292Z">
+<meta property="article:modified_time" content="2022-03-10T11:51:05.274Z">
+<meta property="article:author" content="patrlean">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/QCQI_lec_notes/_images/QFT.png">
+
+<link rel="canonical" href="http://example.com/images/QCQI_lec_notes/QFT">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : false,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title> | PatrLean 的个人博客
+</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">PatrLean 的个人博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">blog connects us</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">5</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-札记">
+
+    <a href="/categories/%E6%9C%AD%E8%AE%B0/" rel="section"><i class="fa fa-fw fa-book"></i>札记</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+  
+  
+
+          <div class="content page posts-expand">
+            
+
+    
+    
+    
+    <div class="post-block" lang="zh-CN">
+      <header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">
+</h1>
+
+<div class="post-meta">
+  
+  <ul class="breadcrumb">
+          
+            <li><a href="/images/">IMAGES</a></li>
+            <li><a href="/images/QCQI_lec_notes/">QCQI_LEC_NOTES</a></li>
+            <li>QFT</li>
+          
+  </ul>
+
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>量子傅里叶变换 &mdash; pyQPanda  文档</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script async="async" type="text/javascript" src="https://assets.readthedocs.org/static/javascript/readthedocs-doc-embed.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css">
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css">
+    <link rel="index" title="索引" href="genindex.html">
+    <link rel="search" title="搜索" href="search.html">
+    <link rel="next" title="量子相位估计" href="QPE.html">
+    <link rel="prev" title="振幅放大" href="AmplitudeAmplification.html"> 
+
+<!-- RTD Extra Head -->
+
+<link rel="stylesheet" href="https://assets.readthedocs.org/static/css/readthedocs-doc-embed.css" type="text/css">
+
+<script type="application/json" id="READTHEDOCS_DATA">{"ad_free": false, "api_host": "https://readthedocs.org", "build_date": "2021-12-01T02:19:37Z", "builder": "sphinx", "canonical_url": null, "commit": "352347c2", "docroot": "/source/", "features": {"docsearch_disabled": false}, "global_analytics_code": "UA-17997319-1", "language": "zh", "page": "QFT", "programming_language": "cpp", "project": "pyqpanda-toturial", "proxied_api_host": "/_", "source_suffix": ".rst", "subprojects": {}, "theme": "sphinx_rtd_theme", "user_analytics_code": "", "version": "latest"}</script>
+
+<!--
+Using this variable directly instead of using `JSON.parse` is deprecated.
+The READTHEDOCS_DATA global variable will be removed in the future.
+-->
+<script type="text/javascript">
+READTHEDOCS_DATA = JSON.parse(document.getElementById('READTHEDOCS_DATA').innerHTML);
+</script>
+
+<script type="text/javascript" src="https://assets.readthedocs.org/static/javascript/readthedocs-analytics.js" async="async"></script>
+
+<!-- end RTD <extrahead> -->
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pyQPanda
+          
+
+          
+          </a>
+
+          
+            
+            
+            
+              <div class="version">
+                latest
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs">
+    <input type="hidden" name="check_keywords" value="yes">
+    <input type="hidden" name="area" value="default">
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">基础介绍</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="GettingStarted.html">系统配置和安装</a></li>
+</ul>
+<p class="caption"><span class="caption-text">深入学习</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="QGate.html">量子逻辑门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QCircuit.html">量子线路</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QWhile.html">QWhile</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QIf.html">QIf</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QProg.html">量子程序</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QuantumMachine.html">量子虚拟机</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QubitPool.html">量子比特池</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Measure.html">量子测量</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PMeasure.html">概率测量</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QCloudServer.html">本源量子云服务</a></li>
+</ul>
+<p class="caption"><span class="caption-text">量子程序信息</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="NodeIter.html">NodeIter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QGateCounter.html">逻辑门统计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QProgClockCycle.html">统计量子程序时钟周期</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QCircuitInfo.html">获取量子线路对应矩阵</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QCircuitInfo.html#id3">判断量子逻辑门是否匹配量子拓扑结构</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QCircuitInfo.html#id5">获得指定位置的量子逻辑门的相邻量子逻辑门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QCircuitInfo.html#id7">判断两个量子逻辑门是否可交换位置</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QCircuitInfo.html#id9">判断逻辑门是否属于量子芯片支持的量子逻辑门集合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DrawQProg.html">量子线路字符画</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QuantumVolume.html">量子体积</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RandomizedBenchmarking.html">随机基准</a></li>
+<li class="toctree-l1"><a class="reference internal" href="CrossEntropyBenchmarking.html">交叉熵基准</a></li>
+</ul>
+<p class="caption"><span class="caption-text">编译量子程序</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="QProgToQASM.html">量子程序转化QASM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QASMToQProg.html">QASM转化为量子程序</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QProgToQuil.html">量子程序转化为Quil</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QProgStored.html">量子程序序列化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QProgDataParse.html">解析量子程序二进制文件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="OriginIRToQProg.html">OriginIR转化为量子程序</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QProgToOriginIR.html">量子程序转化OriginIR</a></li>
+<li class="toctree-l1"><a class="reference internal" href="OriginIRToQProg.html">OriginIR转化为量子程序</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QCodarMatch.html">量子程序匹配拓扑结构</a></li>
+</ul>
+<p class="caption"><span class="caption-text">实用工具</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="GraphMatch.html">量子线路查询替换</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FillQProgByI.html">用I门填充QProg</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MatrixDecompostion.html">酉矩阵分解</a></li>
+</ul>
+<p class="caption"><span class="caption-text">组件</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="PauliOperator.html">泡利算符类</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FermionOperator.html">费米子算符类</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Optimizer.html">优化算法(直接搜索法)</a></li>
+</ul>
+<p class="caption"><span class="caption-text">VQC</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Var.html">变量</a></li>
+<li class="toctree-l1"><a class="reference internal" href="VarOperator.html">运算符</a></li>
+<li class="toctree-l1"><a class="reference internal" href="VQG.html">可变量子逻辑门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="VQC.html">可变量子逻辑门(VQG)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GradientOptimizer.html">优化算法(梯度下降法)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="VQNetExample.html">综合示例</a></li>
+</ul>
+<p class="caption"><span class="caption-text">量子算法基础</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="QubitAndQGate.html">基础概念回顾</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QPreparation.html">试验态制备与量子纠缠</a></li>
+<li class="toctree-l1"><a class="reference internal" href="HadamardAndSWAP.html">Hadamard Test与SWAP Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="AmplitudeAmplification.html">振幅放大</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">量子傅里叶变换</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">基本定义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">量子线路构造</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#qft">QFT的求和形式与张量积形式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">二进制展开与量子态制备</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">代码实现</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="QPE.html">量子相位估计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QArithmetic.html">量子四则运算</a></li>
+<li class="toctree-l1"><a class="reference internal" href="HHL.html">HHL算法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Grover.html">Grover算法和量子计数算法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Shor.html">Shor算法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QITE.html">量子虚时演化算法</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyQPanda</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>量子傅里叶变换</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a target="_blank" rel="noopener" href="https://github.com/OriginQ/pyQPanda-Toturial/blob/master/source/QFT.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1><span id="量子傅里叶变换">量子傅里叶变换</span></h1>
+<p>量子傅里叶变换（QFT）实质上是经典的逆离散傅里叶变换（IDFT）的量子版本。</p>
+<p>量子傅里叶变换可以将存在于基向量中的数据与振幅中的数据在一定条件下相互转换。</p>
+<div class="section" id="id2">
+<h2><span id="基本定义">基本定义</span></h2>
+<p>如图所示，QFT可以简单地通过对IDFT进行替换得到，QFT和DFT本质上都是同一个向量在两个等价空间中的不同表示形式，即基向量的更换。</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+ y_k\rightarrow\frac{1}{\sqrt N}\Sigma_{j=0}^{N-1}x_j \
+ e^{\frac{2\pi\ i}{N}jk},\\ \left|x\right\rangle\rightarrow \
+ \frac{1}{2^\frac{n}{2}}\Sigma_{k=0}^{2^n-1}e^{\frac{2\pi i}{2^n} \
+ xk}\left|k\right\rangle.
+\end{aligned}\end{split}\]</div>
+<p>由定义可知，空间 <span class="math notranslate nohighlight">\(span\{\left|x\right\rangle\}\)</span> 中的某个向量 <span class="math notranslate nohighlight">\(\Sigma_x\alpha_x\left|x\right\rangle\)</span> 通过傅里叶变换可以表示为另一个等价空间 <span class="math notranslate nohighlight">\(span\{\left|k\right\rangle\}\)</span> 中基向量的线性组合<span class="math notranslate nohighlight">\(\Sigma_k\beta_k\left|k\right\rangle\)</span>, 且线性组合的系数 <span class="math notranslate nohighlight">\(\beta_k\)</span> 由<span class="math notranslate nohighlight">\(\left|x\right\rangle\)</span> 和 <span class="math notranslate nohighlight">\(\alpha_x\)</span> 决定。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">量子傅里叶变换/逆变换，实质上可以视为一种振幅和基向量的相互转化。</p>
+</div>
+</div>
+<div class="section" id="id3">
+<h2><span id="量子线路构造">量子线路构造</span></h2>
+<p>对QFT的量子线路实现需要对其表达式进行变形，得到可以用现有普适量子门组合实现的变换过程。</p>
+<div class="section" id="qft">
+<h3><span id="qft的求和形式与张量积形式">QFT的求和形式与张量积形式</span></h3>
+<p>对任给整数 <span class="math notranslate nohighlight">\(x\)</span> ，由二进制展开 <span class="math notranslate nohighlight">\(k=\Sigma_{i=1}^nk_i2^{n-i}\)</span>，对<span class="math notranslate nohighlight">\(\left|x\right\rangle\)</span> 进行量子傅里叶变换的结果可表示为</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+&amp; QFT(\left|x\right\rangle)=\frac{1}{2^\frac{n}{2}}\Sigma_{k=0}^{2^n-1}e^\frac{2\pi ixk}{2^n} \
+\left|k\right\rangle=\frac{1}{2^\frac{n}{2}}\Sigma_{k_1=0}^1\cdots\Sigma_{k_n=0}^1 \
+e^{2\pi ixk\left(\Sigma_{l=1}^nk_l2^{-l}\right)}\left|k_1\cdots k_n\right\rangle \\
+&amp; =\frac{1}{2^\frac{n}{2}}\Sigma_{k_1=0}^1\cdots\Sigma_{k_n=0}^1\otimes_{l=1}^n
+e^{2\pi ix k_l2^{-l}} \left|k_l\right\rangle=\frac{1}{2^\frac{n}{2}}\otimes_{l=1}^n(\left|0\right\rangle+e^{2\pi ix2^{-l}} \
+\left|1\right\rangle).
+\end{aligned}\end{split}\]</div>
+<p>由上式可知，QFT可以将特定量子态 <span class="math notranslate nohighlight">\(\left|x\right\rangle\)</span> 表示为另一组基的线性组合，而这个线性组合还能表示为多个单比特量子态<span class="math notranslate nohighlight">\(\frac{1}{\sqrt{2}}(\left|0\right\rangle + e^{2\pi ix2^{-l}}\left|1\right\rangle)\)</span> 的张量积。</p>
+<p>因此对任给整数 <span class="math notranslate nohighlight">\(x\)</span>，如果可以由二进制展开位 <span class="math notranslate nohighlight">\(\left|x_{n+1-l}\right\rangle\)</span> 快速构造量子态
+<span class="math notranslate nohighlight">\(\frac{1}{\sqrt{2}}(\left|0\right\rangle + e^{2\pi ix2^{-l}}\left|1\right\rangle)\)</span>，那么就可以通过张量积形式的QFT表达式完成相应QFT量子线路的构造。</p>
+</div>
+<div class="section" id="id4">
+<h3><span id="二进制展开与量子态制备">二进制展开与量子态制备</span></h3>
+<p>任给整数 <span class="math notranslate nohighlight">\(x\)</span> 进行二进制展开近似：</p>
+<div class="math notranslate nohighlight">
+\[\begin{aligned}
+x/2^m \approx \left[x_1\cdots x_m\right]/2^m=\left[0.x_1\cdots x_m\right]=\Sigma_{k=1}^mx_k2^{-k},
+\end{aligned}\]</div>
+<p>而</p>
+<div class="math notranslate nohighlight">
+\[\begin{aligned}
+2\pi ix2^{-l}=2\pi i\left[x_1\cdots x_n\right]2^{-l}=2\pi i\left[0.x_{n-l}\cdots x_n\right].
+\end{aligned}\]</div>
+<p>于是制备 <span class="math notranslate nohighlight">\(\frac{1}{\sqrt{2}}(\left|0\right\rangle + e^{2\pi ix2^{-l}}\left|1\right\rangle)\)</span> 转化为制备 <span class="math notranslate nohighlight">\(\frac{1}{\sqrt{2}}(\left|0\right\rangle + e^{2\pi i [0.x_{n-l}\cdots x_n]}\left|1\right\rangle)\)</span> 。</p>
+<p>注意到 <span class="math notranslate nohighlight">\(H\left|0\right\rangle = \frac{1}{\sqrt{2}}(\left|0\right\rangle + \left|1\right\rangle) = \
+\frac{1}{\sqrt{2}}(\left|0\right\rangle + e^{2\pi i [0.x_n]}\left|1\right\rangle)\)</span> ，而</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+&amp; \frac{1}{\sqrt{2}}(\left|0\right\rangle + e^{2\pi i [0.x_{n-1} x_n]}\left|1\right\rangle) = \
+\frac{1}{\sqrt{2}}(\left|0\right\rangle + e^{2\pi i [0.x_{n-1}]} e^{2\pi i [0.0 x_n]}  \left|1\right\rangle),\\
+&amp; R_m \left|0\right\rangle = \left|0\right\rangle, R_m \left|1\right\rangle = e^{2\pi i \frac{1}{2^m}}\left|1\right\rangle.
+\end{aligned}\end{split}\]</div>
+<p>定义受控旋转量子门 <span class="math notranslate nohighlight">\((C-R)_{j-k+1}\)</span> 满足</p>
+<div class="math notranslate nohighlight">
+\[\begin{aligned}
+(C-R)_{j-k+1} \frac{1}{\sqrt{2}}(\left|0\right\rangle + e^{2\pi i [0.x_{n-j}]}
+\left|1\right\rangle)\left|x_{n-k}\right\rangle = \frac{1}{\sqrt{2}}(
+\left|0\right\rangle + e^{2\pi i [0.x_{n-j}0\cdots 0x_{n-k}]}\left|1\right\rangle.
+\end{aligned}\]</div>
+<p>于是利用量子门 <span class="math notranslate nohighlight">\(H\)</span> 和 <span class="math notranslate nohighlight">\((C-R)_{j-k+1}\)</span> 就可以完成对量子态<span class="math notranslate nohighlight">\(\frac{1}{\sqrt{2}}(\left|0\right\rangle + e^{2\pi ix2^{-l}}\left|1\right\rangle)\)</span>的制备，进而完成QFT的量子线路。</p>
+<p>QFT的量子线路图如下所示</p>
+<img alt="_images/QFT.png" class="align-center" src="_images/QFT.png">
+<p>特别地，注意到上图中初始量子态为 <span class="math notranslate nohighlight">\(\left|x_i\right\rangle\)</span> 的量子比特对应的结果量子态为<span class="math notranslate nohighlight">\(\frac{1}{\sqrt{2}}(\left|0\right\rangle + e^{2\pi ix2^{n+1-l}}\left|1\right\rangle)\)</span>而非 <span class="math notranslate nohighlight">\(\frac{1}{\sqrt{2}}(\left|0\right\rangle + e^{2\pi ix2^{-l}}\left|1\right\rangle)\)</span> ，因此实际使用时还需要追加相应的多组 <span class="math notranslate nohighlight">\(SWAP\)</span> 门。</p>
+</div>
+</div>
+<div class="section" id="id5">
+<h2><span id="代码实现">代码实现</span></h2>
+<p>QFT在一维情况就是Hadamard量子门。
+基于QPanda-2.0的QFT接口函数如下：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">QFT</span><span class="p">(</span><span class="n">qlist</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>选取 <span class="math notranslate nohighlight">\(\left|x\right\rangle=\left|000\right\rangle\)</span> 验证QFT的代码实例如下</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="kn">import</span> <span class="nn">pyqpanda</span> <span class="k">as</span> <span class="nn">pq</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">pi</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+
+    <span class="n">machine</span> <span class="o">=</span> <span class="n">pq</span><span class="o">.</span><span class="n">init_quantum_machine</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">QMachineType</span><span class="o">.</span><span class="n">CPU</span><span class="p">)</span>
+    <span class="n">qvec</span> <span class="o">=</span> <span class="n">machine</span><span class="o">.</span><span class="n">qAlloc_many</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">prog</span> <span class="o">=</span> <span class="n">pq</span><span class="o">.</span><span class="n">create_empty_qprog</span><span class="p">()</span>
+
+    <span class="c1"># 构建量子程序</span>
+    <span class="n">prog</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">pq</span><span class="o">.</span><span class="n">QFT</span><span class="p">(</span><span class="n">qvec</span><span class="p">))</span>
+
+    <span class="c1"># 对量子程序进行概率测量</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">pq</span><span class="o">.</span><span class="n">prob_run_dict</span><span class="p">(</span><span class="n">prog</span><span class="p">,</span> <span class="n">qvec</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">pq</span><span class="o">.</span><span class="n">destroy_quantum_machine</span><span class="p">(</span><span class="n">machine</span><span class="p">)</span>
+
+    <span class="c1"># 打印测量结果</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+         <span class="nb">print</span><span class="p">(</span><span class="n">key</span><span class="o">+</span><span class="s2">&quot;:&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
+</pre></div>
+</div>
+<p>由前文中QFT的定义及 <span class="math notranslate nohighlight">\(\left|x\right\rangle=\left|000\right\rangle\)</span> 可知输出结果应当以均匀概率 <span class="math notranslate nohighlight">\(\frac{1}{8}\)</span> 得到所有量子态，即</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="mi">000</span><span class="p">,</span> <span class="mf">0.125</span>
+<span class="mi">001</span><span class="p">,</span> <span class="mf">0.125</span>
+<span class="mi">010</span><span class="p">,</span> <span class="mf">0.125</span>
+<span class="mi">011</span><span class="p">,</span> <span class="mf">0.125</span>
+<span class="mi">100</span><span class="p">,</span> <span class="mf">0.125</span>
+<span class="mi">101</span><span class="p">,</span> <span class="mf">0.125</span>
+<span class="mi">110</span><span class="p">,</span> <span class="mf">0.125</span>
+<span class="mi">111</span><span class="p">,</span> <span class="mf">0.125</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="QPE.html" class="btn btn-neutral float-right" title="量子相位估计" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="AmplitudeAmplification.html" class="btn btn-neutral float-left" title="振幅放大" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, OriginQC
+      
+        <span class="commit">
+          Revision <code>352347c2</code>.
+        </span>
+      
+
+    </p>
+  </div>
+  Built with <a target="_blank" rel="noopener" href="http://sphinx-doc.org/">Sphinx</a> using a <a target="_blank" rel="noopener" href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a target="_blank" rel="noopener" href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Read the Docs</span>
+      v: latest
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+      <dl>
+        <dt>Versions</dt>
+        
+          <dd><a href="/zh/latest/">latest</a></dd>
+        
+      </dl>
+      <dl>
+        <dt>Downloads</dt>
+        
+          <dd><a target="_blank" rel="noopener" href="//pyqpanda-toturial.readthedocs.io/_/downloads/zh/latest/htmlzip/">html</a></dd>
+        
+      </dl>
+      <dl>
+        <dt>On Read the Docs</dt>
+          <dd>
+            <a target="_blank" rel="noopener" href="//readthedocs.org/projects/pyqpanda-toturial/?fromdocs=pyqpanda-toturial">Project Home</a>
+          </dd>
+          <dd>
+            <a target="_blank" rel="noopener" href="//readthedocs.org/builds/pyqpanda-toturial/?fromdocs=pyqpanda-toturial">Builds</a>
+          </dd>
+      </dl>
+      <hr>
+      Free document hosting provided by <a target="_blank" rel="noopener" href="http://www.readthedocs.org">Read the Docs</a>.
+
+    </div>
+  </div>
+
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+   
+
+</body>
+</html>
+      </div>
+      
+      
+      
+    </div>
+    
+  <ul class="breadcrumb">
+          
+            <li><a href="/images/">IMAGES</a></li>
+            <li><a href="/images/QCQI_lec_notes/">QCQI_LEC_NOTES</a></li>
+            <li>QFT</li>
+          
+  </ul>
+
+    
+    
+    
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#id1"><span class="nav-number">1.</span> <span class="nav-text">量子傅里叶变换</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#id2"><span class="nav-number">1.1.</span> <span class="nav-text">基本定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#id3"><span class="nav-number">1.2.</span> <span class="nav-text">量子线路构造</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#qft"><span class="nav-number">1.2.1.</span> <span class="nav-text">QFT的求和形式与张量积形式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#id4"><span class="nav-number">1.2.2.</span> <span class="nav-text">二进制展开与量子态制备</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#id5"><span class="nav-number">1.3.</span> <span class="nav-text">代码实现</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="patrlean"
+      src="/images/avatarSmall.png">
+  <p class="site-author-name" itemprop="name">patrlean</p>
+  <div class="site-description" itemprop="description">三得利只喝乌龙茶</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/patrlean" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;patrlean" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom github"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/349361858" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;349361858" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom bilibili"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:patriiicabis@gmail.com" title="E-Mail → mailto:patriiicabis@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom Email"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_44634406" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_44634406" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom CSDN"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://music.163.com/#/user/home?id=588410069" title="NetEase Cloud Music → https:&#x2F;&#x2F;music.163.com&#x2F;#&#x2F;user&#x2F;home?id&#x3D;588410069" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom NetEaseCloudMusic"></i></a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">patrlean</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">16k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">14 分钟</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力激情猛烈爆炸驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : '7JF3q74Xi62JMViy5Bhc3uqJ-MdYXbMMI',
+      appKey     : 'c9puHAmapHdRf9e83usdLViq',
+      placeholder: "你好鸭!",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : 'https://7jf3q74x.api.lncldglobal.com'
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
