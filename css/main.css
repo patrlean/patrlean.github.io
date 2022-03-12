@@ -1170,7 +1170,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #782f4a;
+  background: #6fffff;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2502,7 +2502,7 @@ mjx-container + br {
 }
 /* background picture */
 body {
-  background: url("https://api.dujin.org/bing/1920.php");
+  background: url("https://bing.biturl.top/?resolution=1920&format=image&index=0&mkt=zh-CN");
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-position: 50% 50%;
