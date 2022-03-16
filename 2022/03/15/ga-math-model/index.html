@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="manifest" href="/images/manifest.json">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta property="og:type" content="article">
+<meta property="og:title" content="遗传算法初探">
+<meta property="og:url" content="http://example.com/2022/03/15/ga-math-model/index.html">
+<meta property="og:site_name" content="PatrLean 的个人博客">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20210420132059220.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDYzNDQwNg==,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2021042308434743.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDYzNDQwNg==,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20210423225513348.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDYzNDQwNg==,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20210423225337321.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDYzNDQwNg==,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20210424234532648.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDYzNDQwNg==,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="article:published_time" content="2022-03-15T10:51:01.000Z">
+<meta property="article:modified_time" content="2022-03-16T11:13:23.975Z">
+<meta property="article:author" content="patrlean">
+<meta property="article:tag" content="math model">
+<meta property="article:tag" content="ga">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20210420132059220.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDYzNDQwNg==,size_16,color_FFFFFF,t_70#pic_center">
+
+<link rel="canonical" href="http://example.com/2022/03/15/ga-math-model/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>遗传算法初探 | PatrLean 的个人博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">PatrLean 的个人博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">blog connects us</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">5</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">8</span></a>
+
+  </li>
+        <li class="menu-item menu-item-札记">
+
+    <a href="/categories/%E6%9C%AD%E8%AE%B0/" rel="section"><i class="fa fa-fw fa-book"></i>札记</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/03/15/ga-math-model/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatarSmall.png">
+      <meta itemprop="name" content="patrlean">
+      <meta itemprop="description" content="三得利只喝乌龙茶">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PatrLean 的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          遗传算法初探
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-03-15 18:51:01" itemprop="dateCreated datePublished" datetime="2022-03-15T18:51:01+08:00">2022-03-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-03-16 19:13:23" itemprop="dateModified" datetime="2022-03-16T19:13:23+08:00">2022-03-16</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E5%AD%A6%E6%A8%A1%E5%9E%8B/" itemprop="url" rel="index"><span itemprop="name">数学模型</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/03/15/ga-math-model/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/03/15/ga-math-model/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote class="blockquote-center">
+</blockquote>
+<span id="more"></span>
+<h1><span id="遗传算法">遗传算法</span></h1>
+<h1><span id="演化思想">演化思想</span></h1>
+<h2><span id="遗传算法的本质">遗传算法的本质</span></h2>
+<p>遗传算法的本质===模拟==生物演化。具体来说，模拟对象是生物演化中的种种自然现象（如变异，交叉互换，交配，淘汰）。因此，一个优秀的遗传算法首先应该做到生物演化的模拟。但是并非仅仅对生物演化进行简单复现，生物演化中有种种细节可以忽略不计，如DNA非编码段变异，等等</p>
+<p>那演化中最重要的部分是什么？</p>
+<p>==对下一代种群的定向选择==。这句话有三个要点，一个是下一代，另一个是定向，最后一个是选择。先说后两者，所谓定向就是人为设定衡量不同个体的可计算指标；而选择则是保留满足指标的个体；最后一点，下一代怎么产生呢？就是遗传，变异和交叉互换。</p>
+<p>生物学有关名词这里就不解释了，假设高中生物老师都讲过。</p>
+<h1><span id="ras函数">Ras函数</span></h1>
+<p>Ras函数（Rastrigin’s Function）是一个典型的非线性==多峰==函数，具有多个局部的极大值点和极小值点，常规算法很容易陷入局部最优解中。<br>
+在n维空间中，Ras函数表达式为：<br>
+$$  f(x)=An+\sum_{i=1}^{n}\ [x^{2}<em>{i}-Acos(2\pi x</em>{i})]  $$<br>
+其中，$A$是可以人为定义的常量，$n$是Ras函数的维数<br>
+当$n=2$时，Ras函数为二维形式，这个函数在$(0,0)$有全局最小值。</p>
+<p>下图是$A=10,n=2$时，Ras函数在$x,y\in[-5,5]$上的三维图象</p>
+<p><img src="https://img-blog.csdnimg.cn/20210420132059220.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDYzNDQwNg==,size_16,color_FFFFFF,t_70#pic_center" alt="hello"></p>
+<h1><span id="遗传算法">遗传算法</span></h1>
+<h2><span id="目标函数-objective-function">==目标函数== objective function</span></h2>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">%%</span></span><br><span class="line"><span class="comment">% objective function</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">ans</span> = <span class="title">ras</span><span class="params">(A,x)</span> </span></span><br><span class="line">    <span class="built_in">ans</span> = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span>=<span class="number">1</span>:<span class="number">2</span></span><br><span class="line">        <span class="built_in">ans</span> = <span class="built_in">ans</span>+A+x(<span class="built_in">i</span>)^<span class="number">2</span>-A*<span class="built_in">cos</span>(<span class="number">2</span>*<span class="built_in">pi</span>*x(<span class="built_in">i</span>));</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="comment">%%</span></span><br></pre></td></tr></table></figure>
+<p>目标函数是Ras函数。计算这个函数需要三个参数，分别是$A$,$x$,$y$。其中$A$是我们自行设定的常数，而$x，y$则对应二维平面上的点<br>
+补充：<br>
+<code>function</code>-------&gt;<a target="_blank" rel="noopener" href="https://ww2.mathworks.cn/help/matlab/ref/function.html?searchHighlight=function&amp;s_tid=srchtitle">matlab官方文档-function</a><br>
+<code>fsurf</code>-------&gt;<a target="_blank" rel="noopener" href="https://ww2.mathworks.cn/help/matlab/ref/fsurf.html#bu62pyw-1-xyinterval">matlab官方文档-fsurf</a></p>
+<h2><span id="初始化种群-initialization-population">==初始化种群== initialization population</span></h2>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% initialization population - binary form</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">x</span> = <span class="title">init</span> <span class="params">(pop_size,chromolength)</span></span></span><br><span class="line">    x = <span class="built_in">round</span>(<span class="built_in">rand</span>(pop_size*<span class="number">2</span>,chromolength));</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>初始种群要足够随机且多样：目的是尽可能扩大搜索范围，找到最优解</li>
+<li>染色体长度等于初始种群中每个个体的二进制编码长度</li>
+</ul>
+<h2><span id="解码-decodingfrom-binary-to-decimal">==解码== decoding：from binary to decimal</span></h2>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% coding - binary to decimal floating point</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">x</span> = <span class="title">decoding</span><span class="params">(pop)</span></span></span><br><span class="line">    [r,c] = <span class="built_in">size</span>(pop);</span><br><span class="line">    vector = <span class="built_in">ones</span>(<span class="number">16</span>,<span class="number">1</span>); <span class="comment">% 0~65535</span></span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span>=<span class="number">1</span>:c/<span class="number">2</span></span><br><span class="line">        <span class="keyword">for</span> <span class="built_in">j</span>=<span class="number">1</span>:(c/<span class="number">2</span>-<span class="built_in">i</span>)</span><br><span class="line">            vector(<span class="built_in">i</span>) = vector(<span class="built_in">i</span>)*<span class="number">2</span>;</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    pop_xy = mat2cell(pop&#x27;,[c/<span class="number">2</span> c/<span class="number">2</span>]);</span><br><span class="line">    pop_x = pop_xy&#123;<span class="number">1</span>,<span class="number">1</span>&#125;&#x27;*vector;  <span class="comment">%1*16</span></span><br><span class="line">    pop_y = pop_xy&#123;<span class="number">2</span>,<span class="number">1</span>&#125;&#x27;*vector; <span class="comment">%1*16</span></span><br><span class="line">    x=[pop_x pop_y]/<span class="number">65535</span>;</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>每个个体由32位二进制数字组成。32位数字从中间划分成两组，前16位表示x，后16位表示y，组合起来代表二维平面上的点。</p>
+<ul>
+<li>mat2cell的时候注意元胞数组的索引方式<br>
+每个个体与向量$vector$相乘，可以将16位二进制数转化成十进制数$$vector=[2^{15} ，2^{14},…,2,1]$$<br>
+得到的乘积是一个范围落在在$(0,65535)$内的整数。为了将这个范围缩小到10附近，再将结果除以6553。<br>
+函数最后输出一个50*2的矩阵，储存50个个体的二维坐标值<br>
+补充：<br>
+<code>mat2cell</code>函数-------&gt;<a target="_blank" rel="noopener" href="https://ww2.mathworks.cn/help/matlab/ref/mat2cell.html?searchHighlight=mat2cell&amp;s_tid=srchtitle">matlab官方文档-mat2cell</a><br>
+<code>ones</code>函数-------&gt;<a target="_blank" rel="noopener" href="https://ww2.mathworks.cn/help/matlab/ref/ones.html?searchHighlight=ones&amp;s_tid=srchtitle">matlab官方文档-ones<br>
+</a></li>
+</ul>
+<h2><span id="计算目标函数-calculate-the-real-value">==计算目标函数== calculate the real value</span></h2>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% calculate the real value</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">obj</span> = <span class="title">calobjvalue</span><span class="params">(pop2)</span></span></span><br><span class="line">    [r,c] = <span class="built_in">size</span>(pop2);</span><br><span class="line">    obj = [ ];</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span>=<span class="number">1</span>:r</span><br><span class="line">        <span class="keyword">for</span> <span class="built_in">j</span>=<span class="number">1</span>:c</span><br><span class="line">            obj(<span class="built_in">i</span>) = ras(pop2(<span class="built_in">i</span>,:));</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    obj =obj&#x27;;  <span class="comment">% 1*50 objective value in floating point</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<h2><span id="计算适应度-calculate-the-fittness-value">==计算适应度== calculate the fittness value</span></h2>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% calculate the fittness value; range in 0 and 1</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fit</span> = <span class="title">calfitvalue</span><span class="params">(pop_obj)</span></span></span><br><span class="line">    [r,c] = <span class="built_in">size</span>(pop_obj);</span><br><span class="line">    <span class="comment">% calculate the max &amp; min value</span></span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span>=<span class="number">1</span>:r/<span class="number">2</span> <span class="comment">% divide the pop_obj into two sets % 注意对矩阵行列的索引是不是弄反了</span></span><br><span class="line">        <span class="keyword">if</span> pop_obj(<span class="built_in">i</span>) &gt; pop_obj(r+<span class="number">1</span>-<span class="built_in">i</span>)</span><br><span class="line">            maxSet(<span class="built_in">i</span>) = pop_obj(<span class="built_in">i</span>);</span><br><span class="line">            minSet(<span class="built_in">i</span>) = pop_obj(r+<span class="number">1</span>-<span class="built_in">i</span>);</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            maxSet(<span class="built_in">i</span>) = pop_obj(r+<span class="number">1</span>-<span class="built_in">i</span>);</span><br><span class="line">            minSet(<span class="built_in">i</span>) = pop_obj(<span class="built_in">i</span>);</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    pop_max = maxSet(<span class="number">1</span>);</span><br><span class="line">    pop_min = minSet(<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span>=<span class="number">2</span>:r/<span class="number">2</span> <span class="comment">%compare two sets separately</span></span><br><span class="line">        <span class="keyword">if</span> maxSet(<span class="built_in">i</span>) &gt; pop_max</span><br><span class="line">            pop_max = maxSet(<span class="built_in">i</span>);</span><br><span class="line">        <span class="keyword">elseif</span> minSet(<span class="built_in">i</span>) &lt; pop_min</span><br><span class="line">            pop_min = minSet(<span class="built_in">i</span>);</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span>       </span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span>=<span class="number">1</span>:r</span><br><span class="line">        fit(<span class="built_in">i</span>) = <span class="number">1</span>-(pop_obj(<span class="built_in">i</span>)-pop_min)/(pop_max-pop_min);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    fit = fit&#x27;;</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>衡量适应度采用常见归一化方法<br>
+$$ X =  \frac{x-x_{min}}{x_{max}-x_{min}}$$<br>
+如果求解最大值，则$X$越大，个体适应度越高；<br>
+如果求解最小值时，则$(1-X)$的结果越大，个体适应度越高。</p>
+<h2><span id="选择最优个体-choose-the-best-individual">==选择最优个体== choose the best individual</span></h2>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% best</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">best</span> = <span class="title">bestIndividual</span><span class="params">(pop)</span></span></span><br><span class="line">    popDe = decoding(pop);</span><br><span class="line">    obj = calobjvalue(popDe);</span><br><span class="line">    fit = calfitvalue(obj);</span><br><span class="line">    [r,c] = <span class="built_in">max</span>(fit);</span><br><span class="line">    best = popDe(r,:);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<h2><span id="选择复制-selection-copy">==选择复制== selection copy</span></h2>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% evolution</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">pop</span> = <span class="title">evolutionpop</span><span class="params">(pop,fitvalue)</span></span></span><br><span class="line">    <span class="comment">% roulette wheel selection</span></span><br><span class="line">    fitValue = fitvalue/sum(fitvalue);</span><br><span class="line">    cumFit = cumsum(fitValue); <span class="comment">% 工作是不是遗漏了一步</span></span><br><span class="line">    [r,c] = <span class="built_in">size</span>(pop);</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span>=<span class="number">1</span>:r</span><br><span class="line">        dartFather = <span class="built_in">rand</span>; <span class="comment">% select father 缺少交配这一步，仅仅是完全保留优秀个体</span></span><br><span class="line">       <span class="comment">% dartMother = rand; % select mother</span></span><br><span class="line">        <span class="built_in">j</span> = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span> dartFather &gt; cumFit(<span class="built_in">j</span>)</span><br><span class="line">            <span class="built_in">j</span> = <span class="built_in">j</span>+<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line"><span class="comment">%         while dartMother &gt;cumFit(k)</span></span><br><span class="line"><span class="comment">%             k = k+1;</span></span><br><span class="line"><span class="comment">%         end    </span></span><br><span class="line">        popNew(<span class="built_in">i</span>,:) = pop(<span class="built_in">j</span>,:);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    pop = popNew;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>选择复制的思想是每次都保留种群中的优秀个体，逐代提高下一代种群适应度。特别要注意的是，种群适应度的提高的过程一定要 “==逐步==” ，提高速度太快，种群容易过早陷入局部最优解；提高速度过慢，则迭代次数过多，计算速度慢。<br>
+那么，怎样才能体现 ==逐步== 这二字？<br>
+答案是，在每一代种群中选择优秀个体的同时，保留一些不那么优秀的个体，为种群提供多样性和可能性。<br>
+或者降低交叉互换，基因变异的概率<br>
+补充：<br>
+轮盘赌--------&gt;<a target="_blank" rel="noopener" href="https://blog.csdn.net/u010807846/article/details/51088750">轮盘赌算法</a><br>
+<code>cumsum</code>--------&gt;<a target="_blank" rel="noopener" href="https://ww2.mathworks.cn/help/matlab/ref/cumsum.html?searchHighlight=cumsum&amp;s_tid=srchtitle">matlab帮助文档-cumsum</a><br>
+进行到这一步，结合计算适应度、计算目标函数、选择最优个体和选择复制，已经可以得到多次演化大致的图象<br>
+<img src="https://img-blog.csdnimg.cn/2021042308434743.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDYzNDQwNg==,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"><br>
+图象在前10次迭代里快速向高适应度方向演化，但是在演化10次左右后最小值不再改变，呈现为一条平滑的直线，陷入局部最优解。<br>
+用这种不进行交叉互换，不产生基因突变，仅仅依靠选择复制的算法，计算得最优个体为$(3.3357    ,3.5710)$。</p>
+<h2><span id="交叉互换-crossover">==交叉互换== crossover</span></h2>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">popNew</span> = <span class="title">crossover</span><span class="params">(pop,pc,fitvalue)</span></span></span><br><span class="line">    [r,c] = <span class="built_in">size</span>(pop);</span><br><span class="line">    fitValue = fitvalue/sum(fitvalue);</span><br><span class="line">    cumFit = cumsum(fitValue);</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span>=<span class="number">1</span>:r</span><br><span class="line">        dart = <span class="built_in">rand</span>;</span><br><span class="line">        popNew(<span class="built_in">i</span>,:) = pop(<span class="built_in">i</span>,:);</span><br><span class="line">        <span class="keyword">if</span> dart &lt; pc <span class="comment">% 选择是否进行交叉互换</span></span><br><span class="line">            <span class="comment">% 选择pop(i,:)的交叉互换对象 pop(j,:)</span></span><br><span class="line">            dart2 = <span class="built_in">rand</span>;</span><br><span class="line">            <span class="built_in">j</span> = <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">while</span> dart2 &gt; cumFit(<span class="built_in">j</span>)</span><br><span class="line">               <span class="built_in">j</span> = <span class="built_in">j</span>+<span class="number">1</span>;</span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">             <span class="comment">% 确定彼此从哪一位开始交叉互换</span></span><br><span class="line">            dart3 = (c/<span class="number">2</span>)*<span class="built_in">rand</span>;</span><br><span class="line">            k = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">while</span> k &lt; dart3</span><br><span class="line">                k = k+<span class="number">1</span>;</span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">            <span class="comment">% 进行交叉互换</span></span><br><span class="line">            <span class="keyword">for</span> n=<span class="number">1</span>:(k<span class="number">-1</span>)</span><br><span class="line">                popNew(<span class="built_in">i</span>,n) = pop(<span class="built_in">i</span>,n);</span><br><span class="line">                popNew(<span class="built_in">i</span>,n+c/<span class="number">2</span>) = pop(<span class="built_in">i</span>,n+c/<span class="number">2</span>);</span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">            <span class="keyword">for</span> m=k:c/<span class="number">2</span></span><br><span class="line">                popNew(<span class="built_in">i</span>,m) = pop(<span class="built_in">j</span>,m);</span><br><span class="line">                popNew(<span class="built_in">i</span>,m+c/<span class="number">2</span>) = pop(<span class="built_in">j</span>,m+c/<span class="number">2</span>);</span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>从任意位置开始随机选择两个个体交换染色体，进行交叉互换<br>
+<img src="https://img-blog.csdnimg.cn/20210423225513348.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDYzNDQwNg==,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"><br>
+交叉互换后得到的解更加逼近于全局最优解，得到的最优个体为$( 2.5010    ,1.5626<br>
+)$</p>
+<h2><span id="随机变异-mutation">==随机变异== mutation</span></h2>
+<figure class="highlight m"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% mutation</span></span><br><span class="line">function popNew <span class="built_in">=</span> mutation(pop,pm)</span><br><span class="line">    <span class="comment">% 同比例放大pm与dart</span></span><br><span class="line">    [r,c] <span class="built_in">=</span> size(pop);</span><br><span class="line">    dart <span class="built_in">=</span> rand;</span><br><span class="line">    for i<span class="built_in">=</span><span class="number">1</span>:r</span><br><span class="line">        popNew(i,:) <span class="built_in">=</span> pop(i,:);</span><br><span class="line">        <span class="built_in">if</span> dart*<span class="number">10</span> &lt; pm*<span class="number">10</span> <span class="comment">%判断基因是否变异</span></span><br><span class="line">            <span class="comment">% 选择某位进行变异</span></span><br><span class="line">            dart2 <span class="built_in">=</span> rand*c;</span><br><span class="line">            k <span class="built_in">=</span> <span class="number">0</span>;</span><br><span class="line">            while k &lt; dart2</span><br><span class="line">                k <span class="built_in">=</span> k+<span class="number">1</span>;</span><br><span class="line">            end</span><br><span class="line">            <span class="built_in">if</span> popNew(i,k) <span class="built_in">=</span><span class="built_in">=</span> <span class="number">0</span></span><br><span class="line">                popNew(i,k) <span class="built_in">=</span> <span class="number">1</span>;</span><br><span class="line">            <span class="built_in">else</span></span><br><span class="line">                popNew(i,k) <span class="built_in">=</span> <span class="number">0</span>;</span><br><span class="line">            end</span><br><span class="line">        end</span><br><span class="line">    end</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20210423225337321.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDYzNDQwNg==,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"><br>
+随机选择染色体中某位1变成0，0变成1，得到的最优个体为$（  0.0012    ，0.9962)$，更加逼近全局最优解。</p>
+<h2><span id="总代码">==总代码==</span></h2>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br></pre></td><td class="code"><pre><span class="line">clear all;</span><br><span class="line">clc;</span><br><span class="line">pc = <span class="number">0.8</span>; 				<span class="comment">% 交叉互换概率</span></span><br><span class="line">pm = <span class="number">0.05</span>;				<span class="comment">% 基因变异概率</span></span><br><span class="line">pop_size = <span class="number">50</span>; 			<span class="comment">% 种群大小</span></span><br><span class="line">chromolength = <span class="number">32</span>; 		<span class="comment">% 染色体长度</span></span><br><span class="line">times = <span class="number">100</span>;			<span class="comment">% 迭代次数</span></span><br><span class="line"></span><br><span class="line">pop&#123;<span class="number">1</span>,<span class="number">1</span>&#125; = init(pop_size,chromolength); <span class="comment">%产生初始种群</span></span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span>=<span class="number">1</span>:times <span class="comment">%进行一百次种群演化</span></span><br><span class="line">    pop2 = decoding(pop&#123;<span class="built_in">i</span>,<span class="number">1</span>&#125;);</span><br><span class="line">    pop_obj = calobjvalue(pop2);</span><br><span class="line">    total(<span class="built_in">i</span>) = sum(pop_obj);</span><br><span class="line">    pop_fit = calfitvalue(pop_obj);</span><br><span class="line">    pop&#123;<span class="built_in">i</span>+<span class="number">1</span>,<span class="number">1</span>&#125; = evolutionpop(pop&#123;<span class="built_in">i</span>,<span class="number">1</span>&#125;,pop_fit);</span><br><span class="line">    pop&#123;<span class="built_in">i</span>+<span class="number">1</span>,<span class="number">1</span>&#125; = crossover(pop&#123;<span class="built_in">i</span>+<span class="number">1</span>,<span class="number">1</span>&#125;,pc,pop_fit);</span><br><span class="line">    pop&#123;<span class="built_in">i</span>+<span class="number">1</span>,<span class="number">1</span>&#125; = mutation(pop&#123;<span class="built_in">i</span>+<span class="number">1</span>,<span class="number">1</span>&#125;,pm);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">ret = choosebest(pop&#123;times+<span class="number">1</span>,<span class="number">1</span>&#125;)</span><br><span class="line"><span class="built_in">plot</span>(total/pop_size);</span><br><span class="line"><span class="comment">%%</span></span><br><span class="line"><span class="comment">% objective function</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">ans</span> = <span class="title">ras</span><span class="params">(x)</span></span></span><br><span class="line">    <span class="built_in">ans</span> = <span class="number">0</span>;</span><br><span class="line">    A = <span class="number">10</span>;</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span>=<span class="number">1</span>:<span class="number">2</span></span><br><span class="line">        <span class="built_in">ans</span> = <span class="built_in">ans</span>+A+x(<span class="built_in">i</span>)^<span class="number">2</span>-A*<span class="built_in">cos</span>(<span class="number">2</span>*<span class="built_in">pi</span>*x(<span class="built_in">i</span>));</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="comment">%%</span></span><br><span class="line"></span><br><span class="line"><span class="comment">%%</span></span><br><span class="line"><span class="comment">% initialization population - binary</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">x</span> = <span class="title">init</span> <span class="params">(pop_size,chromolength)</span></span></span><br><span class="line">    x = <span class="built_in">round</span>(<span class="built_in">rand</span>(pop_size,chromolength)); <span class="comment">%产生随机01矩阵</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">% coding - binary to decimal floating point</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">x</span> = <span class="title">decoding</span><span class="params">(pop)</span></span></span><br><span class="line">    [r,c] = <span class="built_in">size</span>(pop);</span><br><span class="line">    vector = <span class="built_in">ones</span>(c/<span class="number">2</span>,<span class="number">1</span>); <span class="comment">% 0~65535</span></span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span>=<span class="number">1</span>:c/<span class="number">2</span></span><br><span class="line">        <span class="keyword">for</span> <span class="built_in">j</span>=<span class="number">1</span>:(c/<span class="number">2</span>-<span class="built_in">i</span>)</span><br><span class="line">            vector(<span class="built_in">i</span>) = vector(<span class="built_in">i</span>)*<span class="number">2</span>;</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    pop_xy = mat2cell(pop&#x27;,[c/<span class="number">2</span> c/<span class="number">2</span>]);</span><br><span class="line">    pop_x = pop_xy&#123;<span class="number">1</span>,<span class="number">1</span>&#125;&#x27;*vector;  <span class="comment">%1*16</span></span><br><span class="line">    pop_y = pop_xy&#123;<span class="number">2</span>,<span class="number">1</span>&#125;&#x27;*vector; <span class="comment">%1*16</span></span><br><span class="line">    x=[pop_x pop_y]/<span class="number">6553</span>;;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="comment">%%</span></span><br><span class="line"></span><br><span class="line"><span class="comment">% calculate the real value</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">obj</span> = <span class="title">calobjvalue</span><span class="params">(pop2)</span></span></span><br><span class="line">    [r,c] = <span class="built_in">size</span>(pop2);</span><br><span class="line">    obj = [ ];</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span>=<span class="number">1</span>:r</span><br><span class="line">        <span class="keyword">for</span> <span class="built_in">j</span>=<span class="number">1</span>:c</span><br><span class="line">            obj(<span class="built_in">i</span>) = ras(pop2(<span class="built_in">i</span>,:));</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    obj =obj&#x27;;  <span class="comment">% 1*50 objective value in floating point</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">% calculate the fittness value; range in 0 and 1</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fit</span> = <span class="title">calfitvalue</span><span class="params">(pop_obj)</span></span></span><br><span class="line">    [r,c] = <span class="built_in">size</span>(pop_obj);</span><br><span class="line">    <span class="comment">% calculate the max &amp; min value</span></span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span>=<span class="number">1</span>:r/<span class="number">2</span> <span class="comment">% divide the pop_obj into two sets % 注意对矩阵行列的索引是不是弄反了</span></span><br><span class="line">        <span class="keyword">if</span> pop_obj(<span class="built_in">i</span>) &gt; pop_obj(r+<span class="number">1</span>-<span class="built_in">i</span>)</span><br><span class="line">            maxSet(<span class="built_in">i</span>) = pop_obj(<span class="built_in">i</span>);</span><br><span class="line">            minSet(<span class="built_in">i</span>) = pop_obj(r+<span class="number">1</span>-<span class="built_in">i</span>);</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            maxSet(<span class="built_in">i</span>) = pop_obj(r+<span class="number">1</span>-<span class="built_in">i</span>);</span><br><span class="line">            minSet(<span class="built_in">i</span>) = pop_obj(<span class="built_in">i</span>);</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    pop_max = maxSet(<span class="number">1</span>);</span><br><span class="line">    pop_min = minSet(<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span>=<span class="number">2</span>:r/<span class="number">2</span> <span class="comment">%compare two sets separately</span></span><br><span class="line">        <span class="keyword">if</span> maxSet(<span class="built_in">i</span>) &gt; pop_max</span><br><span class="line">            pop_max = maxSet(<span class="built_in">i</span>);</span><br><span class="line">        <span class="keyword">elseif</span> minSet(<span class="built_in">i</span>) &lt; pop_min</span><br><span class="line">            pop_min = minSet(<span class="built_in">i</span>);</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span>       </span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span>=<span class="number">1</span>:r</span><br><span class="line">        fit(<span class="built_in">i</span>) = <span class="number">1</span>-(pop_obj(<span class="built_in">i</span>)-pop_min)/(pop_max-pop_min);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    fit = fit&#x27;;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">% evolution</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">popNew</span> = <span class="title">evolutionpop</span><span class="params">(pop,fitvalue)</span></span></span><br><span class="line">    <span class="comment">% roulette wheel selection</span></span><br><span class="line">    fitValue = fitvalue/sum(fitvalue);</span><br><span class="line">    cumFit = cumsum(fitValue);</span><br><span class="line">    [r,c] = <span class="built_in">size</span>(pop);</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span>=<span class="number">1</span>:r</span><br><span class="line">        dartFather = <span class="built_in">rand</span>; <span class="comment">% select father 缺少交配这一步，仅仅是完全保留优秀个体</span></span><br><span class="line">       <span class="comment">% dartMother = rand; % select mother</span></span><br><span class="line">        <span class="built_in">j</span> = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span> dartFather &gt; cumFit(<span class="built_in">j</span>)</span><br><span class="line">            <span class="built_in">j</span> = <span class="built_in">j</span>+<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line"><span class="comment">%         while dartMother &gt;cumFit(k) %其实这里是想模拟母本的……</span></span><br><span class="line"><span class="comment">%             k = k+1;</span></span><br><span class="line"><span class="comment">%         end    </span></span><br><span class="line">        popNew(<span class="built_in">i</span>,:) = pop(<span class="built_in">j</span>,:);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    </span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">popNew</span> = <span class="title">crossover</span><span class="params">(pop,pc,fitvalue)</span></span></span><br><span class="line">    [r,c] = <span class="built_in">size</span>(pop);</span><br><span class="line">    fitValue = fitvalue/sum(fitvalue);</span><br><span class="line">    cumFit = cumsum(fitValue);</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span>=<span class="number">1</span>:r</span><br><span class="line">        dart = <span class="built_in">rand</span>;</span><br><span class="line">        popNew(<span class="built_in">i</span>,:) = pop(<span class="built_in">i</span>,:);</span><br><span class="line">        <span class="keyword">if</span> dart &lt; pc <span class="comment">% 选择是否进行交叉互换</span></span><br><span class="line">            <span class="comment">% 选择pop(i,:)的交叉互换对象 pop(j,:)</span></span><br><span class="line">            dart2 = <span class="built_in">rand</span>;</span><br><span class="line">            <span class="built_in">j</span> = <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">while</span> dart2 &gt; cumFit(<span class="built_in">j</span>)</span><br><span class="line">               <span class="built_in">j</span> = <span class="built_in">j</span>+<span class="number">1</span>;</span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">             <span class="comment">% 确定彼此从哪一位开始交叉互换</span></span><br><span class="line">            dart3 = (c/<span class="number">2</span>)*<span class="built_in">rand</span>;</span><br><span class="line">            k = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">while</span> k &lt; dart3</span><br><span class="line">                k = k+<span class="number">1</span>;</span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">            <span class="comment">% 进行交叉互换</span></span><br><span class="line">            <span class="keyword">for</span> n=<span class="number">1</span>:(k<span class="number">-1</span>)</span><br><span class="line">                popNew(<span class="built_in">i</span>,n) = pop(<span class="built_in">i</span>,n);</span><br><span class="line">                popNew(<span class="built_in">i</span>,n+c/<span class="number">2</span>) = pop(<span class="built_in">i</span>,n+c/<span class="number">2</span>);</span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">            <span class="keyword">for</span> m=k:c/<span class="number">2</span></span><br><span class="line">                popNew(<span class="built_in">i</span>,m) = pop(<span class="built_in">j</span>,m);</span><br><span class="line">                popNew(<span class="built_in">i</span>,m+c/<span class="number">2</span>) = pop(<span class="built_in">j</span>,m+c/<span class="number">2</span>);</span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">% mutation</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">popNew</span> = <span class="title">mutation</span><span class="params">(pop,pm)</span></span></span><br><span class="line">    <span class="comment">% 同比例放大pm与dart</span></span><br><span class="line">    [r,c] = <span class="built_in">size</span>(pop);</span><br><span class="line">    dart = <span class="built_in">rand</span>;</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span>=<span class="number">1</span>:r</span><br><span class="line">        popNew(<span class="built_in">i</span>,:) = pop(<span class="built_in">i</span>,:);</span><br><span class="line">        <span class="keyword">if</span> dart*<span class="number">10</span> &lt; pm*<span class="number">10</span> <span class="comment">%判断基因是否变异</span></span><br><span class="line">            <span class="comment">% 选择某位进行变异</span></span><br><span class="line">            dart2 = <span class="built_in">rand</span>*c;</span><br><span class="line">            k = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">while</span> k &lt; dart2</span><br><span class="line">                k = k+<span class="number">1</span>;</span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">            <span class="keyword">if</span> popNew(<span class="built_in">i</span>,k) == <span class="number">0</span></span><br><span class="line">                popNew(<span class="built_in">i</span>,k) = <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                popNew(<span class="built_in">i</span>,k) = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">% best</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">best</span> = <span class="title">bestIndividual</span><span class="params">(pop)</span></span></span><br><span class="line">    obj = calobjvalue(pop);</span><br><span class="line">    best = decoding(pop(<span class="number">1</span>,:));</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2><span id="未回答的问题">==未回答的问题==</span></h2>
+<p>算法虽好，仍有遗憾</p>
+<ul>
+<li>陷入局部最优无法跳出窘境</li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/20210424234532648.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDYzNDQwNg==,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"><br>
+上图是迭代一千次的结果，每一个细小尖微的波动都是突变在演化中产生的影响，但是仍没有跳出局部最优的窘境。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/math-model/" rel="tag"># math model</a>
+              <a href="/tags/ga/" rel="tag"># ga</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/03/14/quantum-notes-fourier/" rel="prev" title="量子傅里叶变换,相位估计以及量子搜索">
+      <i class="fa fa-chevron-left"></i> 量子傅里叶变换,相位估计以及量子搜索
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">遗传算法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">演化思想</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.1.</span> <span class="nav-text">遗传算法的本质</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">Ras函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">遗传算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.1.</span> <span class="nav-text">&#x3D;&#x3D;目标函数&#x3D;&#x3D; objective function</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.2.</span> <span class="nav-text">&#x3D;&#x3D;初始化种群&#x3D;&#x3D; initialization population</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.3.</span> <span class="nav-text">&#x3D;&#x3D;解码&#x3D;&#x3D; decoding：from binary to decimal</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.4.</span> <span class="nav-text">&#x3D;&#x3D;计算目标函数&#x3D;&#x3D; calculate the real value</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.5.</span> <span class="nav-text">&#x3D;&#x3D;计算适应度&#x3D;&#x3D; calculate the fittness value</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.6.</span> <span class="nav-text">&#x3D;&#x3D;选择最优个体&#x3D;&#x3D; choose the best individual</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.7.</span> <span class="nav-text">&#x3D;&#x3D;选择复制&#x3D;&#x3D; selection copy</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.8.</span> <span class="nav-text">&#x3D;&#x3D;交叉互换&#x3D;&#x3D; crossover</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.9.</span> <span class="nav-text">&#x3D;&#x3D;随机变异&#x3D;&#x3D; mutation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.10.</span> <span class="nav-text">&#x3D;&#x3D;总代码&#x3D;&#x3D;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.11.</span> <span class="nav-text">&#x3D;&#x3D;未回答的问题&#x3D;&#x3D;</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="patrlean"
+      src="/images/avatarSmall.png">
+  <p class="site-author-name" itemprop="name">patrlean</p>
+  <div class="site-description" itemprop="description">三得利只喝乌龙茶</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/patrlean" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;patrlean" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom github"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/349361858" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;349361858" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom bilibili"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:patriiicabis@gmail.com" title="E-Mail → mailto:patriiicabis@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom Email"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_44634406" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_44634406" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom CSDN"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://music.163.com/#/user/home?id=588410069" title="NetEase Cloud Music → https:&#x2F;&#x2F;music.163.com&#x2F;#&#x2F;user&#x2F;home?id&#x3D;588410069" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom NetEaseCloudMusic"></i></a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">patrlean</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">33k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">30 分钟</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力激情猛烈爆炸驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : '7JF3q74Xi62JMViy5Bhc3uqJ-MdYXbMMI',
+      appKey     : 'c9puHAmapHdRf9e83usdLViq',
+      placeholder: "你好鸭!",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : 'https://7jf3q74x.api.lncldglobal.com'
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
