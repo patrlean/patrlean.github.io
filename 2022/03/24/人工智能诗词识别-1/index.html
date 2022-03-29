@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="manifest" href="/images/manifest.json">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="“诗者，志之所之也。在心为志，发言为诗”   ————《毛诗·大序》   用统计判别的方式区分诗歌作者">
+<meta property="og:type" content="article">
+<meta property="og:title" content="人工智能诗词识别">
+<meta property="og:url" content="http://example.com/2022/03/24/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E8%AF%97%E8%AF%8D%E8%AF%86%E5%88%AB-1/index.html">
+<meta property="og:site_name" content="PatrLean 的个人博客">
+<meta property="og:description" content="“诗者，志之所之也。在心为志，发言为诗”   ————《毛诗·大序》   用统计判别的方式区分诗歌作者">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://github.com/patrlean/images/blob/main/poem_flow_chart.png?raw=true">
+<meta property="og:image" content="https://github.com/patrlean/images/blob/main/pinze_flow_chart.png?raw=true">
+<meta property="og:image" content="https://github.com/patrlean/images/blob/main/tonefoot_flow_cahrt_1.png?raw=true">
+<meta property="og:image" content="https://github.com/patrlean/images/blob/main/preVSreal.png?raw=true">
+<meta property="article:published_time" content="2022-03-24T15:46:23.000Z">
+<meta property="article:modified_time" content="2022-03-28T15:54:06.503Z">
+<meta property="article:author" content="patrlean">
+<meta property="article:tag" content="统计判别">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/patrlean/images/blob/main/poem_flow_chart.png?raw=true">
+
+<link rel="canonical" href="http://example.com/2022/03/24/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E8%AF%97%E8%AF%8D%E8%AF%86%E5%88%AB-1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>人工智能诗词识别 | PatrLean 的个人博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">PatrLean 的个人博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">自己有茶 咖啡也可</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">5</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">9</span></a>
+
+  </li>
+        <li class="menu-item menu-item-札记">
+
+    <a href="/categories/%E6%9C%AD%E8%AE%B0/" rel="section"><i class="fa fa-fw fa-book"></i>札记</a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-fw fa-link"></i>友链</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/03/24/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E8%AF%97%E8%AF%8D%E8%AF%86%E5%88%AB-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://raw.githubusercontent.com/patrlean/images/main/avatar_keda.jpg">
+      <meta itemprop="name" content="patrlean">
+      <meta itemprop="description" content="三得利爱喝乌龙茶">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PatrLean 的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          人工智能诗词识别
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-03-24 23:46:23" itemprop="dateCreated datePublished" datetime="2022-03-24T23:46:23+08:00">2022-03-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-03-28 23:54:06" itemprop="dateModified" datetime="2022-03-28T23:54:06+08:00">2022-03-28</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/03/24/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E8%AF%97%E8%AF%8D%E8%AF%86%E5%88%AB-1/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/03/24/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E8%AF%97%E8%AF%8D%E8%AF%86%E5%88%AB-1/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote class="blockquote-center">
+<p align="center">
+“诗者，志之所之也。在心为志，发言为诗”
+</p>
+<p align="right">
+————《毛诗·大序》</p>
+<p align="center">
+<font size="2"> 用统计判别的方式区分诗歌作者 </font>
+</p>
+</blockquote>
+<span id="more"></span>
+<h1><span id="问题重述">问题重述</span></h1>
+<p>用十首杜甫和李白的五言诗歌作为训练样本，使用统计判别的方法判断“白水绕东城”该诗句出自哪位诗人？并最有可能出现在哪一句？</p>
+<p>诗歌数据收集如下：<a target="_blank" rel="noopener" href="https://github.com/patrlean/ai-poetry/archive/refs/heads/main.zip">DuFu/LiBai-github</a></p>
+<h1><span id="问题分析">问题分析</span></h1>
+<p>针对这十组诗歌，首先分析文本中哪些特征值得被我们选择。由于这些特征以文本的形式存在，下一步考虑如何将这些文本特征转化为数据。<br>
+分别针对两个问题：判断诗人；判断位置，选择不同的分类数目。由于不知道特征的概率分布，选择非参数估计方法进行类概率密度估计。最后基于最小风险准则进行类别判断。</p>
+<div align="center">
+<img src="https://github.com/patrlean/images/blob/main/poem_flow_chart.png?raw=true" style="zoom:75%;">
+</div>
+<h1><span id="从文本到数字">从文本到数字</span></h1>
+<p>诗歌是纯文本信息，无法直接处理。首先我们要将文本转化数字。</p>
+<p>转化过程中要考虑如下两点</p>
+<ol>
+<li>文本信息的选择：要转化哪些文本中的信息</li>
+<li>文本的转化方式：如何将这些信息转化成数字</li>
+</ol>
+<h2><span id="文本信息的选择">文本信息的选择</span></h2>
+<p>如何选择文本信息？哪些文本信息是有价值的？哪些信息是可以忽略的？这个必须根据诗歌的特点进行判断！</p>
+<p>正如引言所述，诗者，志之所之也。在心为志，发言为诗。诗歌表达人的情感，怀抱在心则为情感意志，用语言把它说出来就是诗。这句话里面包含诗歌文本中最重要的两个信息：其一是情感，文本上对应着意象；其二是言说，文本上对应着平仄。</p>
+<p>除此之外，根据所掌握的诗歌知识和搜索结果，诗歌里的有效信息还有许多。总结如下：</p>
+<ul>
+<li>平仄</li>
+<li>韵脚</li>
+<li>意象</li>
+<li>对仗</li>
+</ul>
+<h2><span id="从文本到数字">从文本到数字</span></h2>
+<h3><span id="平仄提取">平仄提取</span></h3>
+<p>==诗歌不同位置的平仄顺序不同，统计平仄出现顺序可能可以推断出诗句出现的位置。==</p>
+<div align="center">
+<img src="https://github.com/patrlean/images/blob/main/pinze_flow_chart.png?raw=true" style="zoom:75%;">
+</div>
+<p>平仄指的是汉字读音的音调，古语中对应平声、上声、入声和去声。但是随着语言流变，古语发音与现在已有不同。在普通话中，四声声调为：阴平（第一声）、阳平（第二声）、上声（第三声）、去声（第四声），其中，第一声、第二声是平声；第三声、第四声是仄声。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">声调位置</th>
+<th style="text-align:center">字例</th>
+<th style="text-align:center">拼音</th>
+<th style="text-align:center">平仄</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">阴平声</td>
+<td style="text-align:center">妈</td>
+<td style="text-align:center">mā（第一声）</td>
+<td style="text-align:center">平</td>
+</tr>
+<tr>
+<td style="text-align:center">阳平声</td>
+<td style="text-align:center">麻</td>
+<td style="text-align:center">má（第二声）</td>
+<td style="text-align:center">平</td>
+</tr>
+<tr>
+<td style="text-align:center">上声</td>
+<td style="text-align:center">马</td>
+<td style="text-align:center">mǎ（第三声）</td>
+<td style="text-align:center">仄</td>
+</tr>
+<tr>
+<td style="text-align:center">去声</td>
+<td style="text-align:center">骂</td>
+<td style="text-align:center">mà（第四声）</td>
+<td style="text-align:center">仄</td>
+</tr>
+</tbody>
+</table>
+<p>分别将四种声调对应到$1234$,可以将文本转化成数字。<br>
+设$X_i$为五言诗句中某句的第$i$个字符，四种声调分别为$a_1,a_2,a_3,a_4$,则<br>
+$$<br>
+X_i=<br>
+\begin{cases}<br>
+1 &amp; X_i\in a_1\<br>
+2 &amp; X_i\in a_2\<br>
+3 &amp; X_i\in a_3\<br>
+4 &amp; X_i\in a_4\<br>
+\end{cases}<br>
+$$<br>
+中文汉字带有声调的元音字母只有六个，分别是ā ō ē ī ū ü。每个句子都对这六个元音字母进行一次判断，可以得到对应的声调数字<br>
+<strong>实例</strong><br>
+处理前的拼音：Chuáng qián míngyuèguāng<br>
+处理后的数字：22241</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将文本转化成四声调，每五个声调为列表中一个元素返回。</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">Text2tone</span>(<span class="params">filename</span>):</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(filename, <span class="string">&quot;r&quot;</span>, encoding=<span class="string">&#x27;UTF-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        tone = []</span><br><span class="line">        <span class="keyword">for</span> line <span class="keyword">in</span> f.readlines():</span><br><span class="line">            line = line.strip(<span class="string">&#x27;\n&#x27;</span>)  <span class="comment">#去掉列表中每一个元素的换行符</span></span><br><span class="line">            linetone = Pinyin2tone(line)</span><br><span class="line">            tone.append(linetone)</span><br><span class="line">    <span class="keyword">return</span> tone   </span><br><span class="line"></span><br><span class="line"><span class="comment"># 返回五个声调</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">Pinyin2tone</span>(<span class="params">text</span>):</span></span><br><span class="line">    linetone = []</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">str</span> <span class="keyword">in</span> text:</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">str</span> == <span class="string">&#x27;ā&#x27;</span> <span class="keyword">or</span> <span class="built_in">str</span> == <span class="string">&#x27;ī&#x27;</span> <span class="keyword">or</span> <span class="built_in">str</span> == <span class="string">&#x27;ū&#x27;</span> <span class="keyword">or</span> <span class="built_in">str</span> == <span class="string">&#x27;ē&#x27;</span> <span class="keyword">or</span> <span class="built_in">str</span> == <span class="string">&#x27;ō&#x27;</span>:</span><br><span class="line">            linetone.append(<span class="number">1</span>) </span><br><span class="line">        <span class="keyword">elif</span> <span class="built_in">str</span> == <span class="string">&#x27;á&#x27;</span> <span class="keyword">or</span> <span class="built_in">str</span> == <span class="string">&#x27;í&#x27;</span> <span class="keyword">or</span> <span class="built_in">str</span> == <span class="string">&#x27;ó&#x27;</span> <span class="keyword">or</span> <span class="built_in">str</span> == <span class="string">&#x27;ú&#x27;</span> <span class="keyword">or</span> <span class="built_in">str</span> == <span class="string">&#x27;é&#x27;</span>:</span><br><span class="line">            linetone.append(<span class="number">2</span>)</span><br><span class="line">        <span class="keyword">elif</span> <span class="built_in">str</span> == <span class="string">&#x27;ǔ&#x27;</span> <span class="keyword">or</span> <span class="built_in">str</span> == <span class="string">&#x27;ǎ&#x27;</span> <span class="keyword">or</span> <span class="built_in">str</span> == <span class="string">&#x27;ǒ&#x27;</span> <span class="keyword">or</span> <span class="built_in">str</span> == <span class="string">&#x27;ě&#x27;</span> <span class="keyword">or</span> <span class="built_in">str</span> == <span class="string">&#x27;ǐ&#x27;</span> <span class="keyword">or</span> <span class="built_in">str</span> == <span class="string">&#x27;ǚ&#x27;</span>:</span><br><span class="line">            linetone.append(<span class="number">3</span>)</span><br><span class="line">        <span class="keyword">elif</span> <span class="built_in">str</span> == <span class="string">&#x27;è&#x27;</span> <span class="keyword">or</span> <span class="built_in">str</span> == <span class="string">&#x27;ì&#x27;</span>  <span class="keyword">or</span> <span class="built_in">str</span> == <span class="string">&#x27;à&#x27;</span> <span class="keyword">or</span> <span class="built_in">str</span> == <span class="string">&#x27;ù&#x27;</span> <span class="keyword">or</span> <span class="built_in">str</span> == <span class="string">&#x27;ò&#x27;</span>:</span><br><span class="line">            linetone.append(<span class="number">4</span>)</span><br><span class="line">    <span class="keyword">return</span> linetone</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>按照这个方法可以分别的到李白与杜甫的数字声调列表。根据文字的平仄关系，通过统计判断可以推断诗句出现的位置</p>
+<h3><span id="韵脚提取">韵脚提取</span></h3>
+<p>==不同的韵脚抒发的情感不同，因此诗人对不同韵脚的使用偏好也不一样。韵脚也许可以区分诗句作者。==</p>
+<div align="center">
+<img src="https://github.com/patrlean/images/blob/main/tonefoot_flow_cahrt_1.png?raw=true" style="zoom:75%;">
+</div>
+<p>韵脚是一般是句末押韵的字。就唐诗而言，一般每两句一个韵脚。比如，“床前明月光，疑是地上霜”韵脚为 ang</p>
+<p>将同一作者所有诗文的韵脚提取出来，由于不同韵脚之间是离散关系。统计不同作者每种韵脚出现的次数，可以得到有关韵脚的最大似然概率</p>
+<h1><span id="判断作者">判断作者</span></h1>
+<p>诗文一共分为两类,第一类为作者是李白，第二类为作者是杜甫，故<br>
+$$<br>
+w_1=LiBai \w_2=DuFu<br>
+$$<br>
+通过韵脚提取我们可以得到不同韵脚的最大似然概率，如韵脚 ‘eng’,$N$ 为韵脚总个数 ；$k$ 为某种特定韵脚的个数，这里默认窗宽为 $1$ ,则<br>
+$$<br>
+p(eng|LiBai) = \frac{k}{N}<br>
+$$<br>
+经过简单的计算得到，<br>
+$$<br>
+p(eng|DuFu)= 0.19230769230769232\<br>
+p(eng|LiBai)=0.05263157894736842<br>
+$$<br>
+依据贝叶斯最小风险准则<br>
+$$<br>
+\frac{p(eng|DuFu)}{p(eng|LiBai)}=3.653 &gt; 0.730 = \frac{p(LiBai)}{p(DuFu)}<br>
+$$<br>
+那么根据结果认为 “白水绕东城” 这句诗词出自杜甫</p>
+<h1><span id="判断出现句数">判断出现句数</span></h1>
+<p><strong>背景</strong></p>
+<ol>
+<li>诗句只在 1 2 3 4 四个位置出现</li>
+<li>训练样本中四个位置的诗句数量相等，也就是说每个类别的先验概率相等</li>
+</ol>
+<p><strong>符号</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:right">符号</th>
+<th style="text-align:left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right">$w_i,i=1,2,3,4$</td>
+<td style="text-align:left">类别：诗句出现的四种可能位置</td>
+</tr>
+<tr>
+<td style="text-align:right">$p(w_i)$</td>
+<td style="text-align:left">类别$w_i$的先验概率</td>
+</tr>
+<tr>
+<td style="text-align:right">$p(w_i $|$ x)$</td>
+<td style="text-align:left">后验概率</td>
+</tr>
+<tr>
+<td style="text-align:right">$p(x$|$w_i)$</td>
+<td style="text-align:left">最大似然概率密度</td>
+</tr>
+<tr>
+<td style="text-align:right">$x^i_j$</td>
+<td style="text-align:left">样本：第$i$个类别的第$j$个样本</td>
+</tr>
+<tr>
+<td style="text-align:right">$x$</td>
+<td style="text-align:left">待估计样本</td>
+</tr>
+</tbody>
+</table>
+<p><strong>分析</strong><br>
+训练样本中有多条已知类别的样本，即多条已经知道位置的诗句。由于不知道样本的概率分布函数，于是选择非参数估计法估计概率密度。但是训练样本的个数较少，利用窗函数的概率密度估计区间中可能样本点较少。于是采用$k_n$ 近邻法估计出总体的概率密度。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">KnnDensityEstimation</span>(<span class="params"> X, x, knn </span>):</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    X is the sample set;</span></span><br><span class="line"><span class="string">    x is the target;</span></span><br><span class="line"><span class="string">    knn is the number of sample;</span></span><br><span class="line"><span class="string">    prob = knn / N / V;</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    </span><br><span class="line">    N = np.size( X )</span><br><span class="line">    distances = Distance( X , x )</span><br><span class="line">    dis_near = np.array([])</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>( knn ):</span><br><span class="line">        dis_near = np.append( dis_near , distances.<span class="built_in">min</span>() )</span><br><span class="line">        index = np.where( distances == np.<span class="built_in">min</span>( distances ) )</span><br><span class="line">        distances[index] = np.<span class="built_in">max</span>( distances )</span><br><span class="line">    radius = np.<span class="built_in">max</span>( dis_near )</span><br><span class="line">    V = <span class="number">2</span> * radius</span><br><span class="line">    prob = knn /( N * V )</span><br><span class="line">    <span class="keyword">return</span> prob</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">Distance</span>(<span class="params"> X , observation </span>):</span></span><br><span class="line">    distance = np.array([])</span><br><span class="line">    <span class="keyword">for</span> x <span class="keyword">in</span> X:</span><br><span class="line">        x_norm = np.linalg.norm( x - observation )</span><br><span class="line">        distance = np.append( distance , x_norm )</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(distance)</span><br><span class="line">    <span class="keyword">return</span> distance    </span><br></pre></td></tr></table></figure>
+<p>目标语句 $x$ 的数字声调为：2 3 4 1 2</p>
+<p>估计得到的最大似然概率分别为：<br>
+$$<br>
+p(x|w_1)=0.0037\<br>
+p(x|w_2)=0.0037\<br>
+p(x|w_3)=0.0037\<br>
+p(x|w_4)=0.0042\<br>
+$$<br>
+因为四类训练样本的数量相同，所以<br>
+$$<br>
+p(w_1)=p(w_2)=p(w_3)=p(w_4)<br>
+$$<br>
+只比较似然概率就可以了。<br>
+对于多类问题，判决结果为似然概率最大的类别<br>
+$$<br>
+若P(w_i|x)=\underset{j}{\max}[P(w_j|x)], 则x\in w_i<br>
+$$</p>
+<p>因此应将目标语句 $x$ 判给 $w_4$ 类</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/patrlean/ai-poetry">code</a></p>
+<h1><span id="结果分析">结果分析</span></h1>
+<p>很不幸，</p>
+<p align="center">
+《送友人》<br>
+<font size="2">唐·李白</font><br>
+青山横北郭，白水绕东城。<br>
+此地一为别，孤蓬万里征。<br>
+浮云游子意，落日故人情。<br>
+挥手自兹去，萧萧班马鸣。<br>
+</p>
+<p>这首诗作者是李白，而我们的结果是杜甫；白水绕东城，是第2句。训练出来的统计判别模型认为这是第4句。</p>
+<ul>
+<li>有没有可能换一句话能正常判断？</li>
+</ul>
+<p>随意从网上选取</p>
+<p align="center">
+《遣意二首》<br>
+<font size="2">唐·杜甫</font><br>
+啭枝黄鸟近，泛渚白鸥轻。<br>
+一径野花落，孤村春水生。<br>
+</p>
+<p>使用韵脚 ‘ing’ 进行尝试<br>
+$$<br>
+\frac{p(eng|DuFu)}{p(eng|LiBai)}=0.974 &gt; 0.730 = \frac{p(LiBai)}{p(DuFu)}<br>
+$$<br>
+认为这首诗作者是杜甫，这首诗作者也确实是杜甫</p>
+<p>分别使用这首诗的 1 2 3 4 句进行判断，判断结果分别为</p>
+<table>
+   <tr>
+      <td>类别</td>
+      <td>似然概率</td>
+   </tr>
+   <tr>
+      <td></td>
+      <td>啭枝黄鸟近</td>
+      <td>泛渚白鸥轻</td>
+      <td>一径野花落</td>
+      <td>孤村春水生</td>
+   </tr>
+   <tr>
+      <td> 1 </td>
+      <td>0.01140445</td>
+      <td>0.01140445</td>
+      <td>0.01235641</td>
+      <td>0.01140445</td>
+   </tr>
+   <tr>
+      <td>2</td>
+      <td>0.01140445</td>
+      <td>0.01140445</td>
+      <td>0.011198947</td>
+      <td>0.014814815</td>
+   </tr>
+   <tr>
+      <td>3</td>
+      <td>0.013250773</td>
+      <td>0.012096246</td>
+      <td>0.010819211</td>
+      <td>0.01140445</td>
+   </tr>
+   <tr>
+      <td>4</td>
+      <td>0.010475656</td>
+      <td>0.012096246</td>
+      <td>0.012096246</td>
+      <td>0.011198947</td>
+   </tr>
+</table>
+更加不幸了
+<ul>
+<li>有没有可能增加数据集能提高判断句数正确率？<br>
+于是从网上又找了40首诗歌 <a target="_blank" rel="noopener" href="https://github.com/patrlean/ai-poetry/blob/main/MoreText.txt">MoreText</a></li>
+</ul>
+<p>再次进行判断，“白水绕东城”的似然概率密度估计为：<br>
+$$<br>
+p(x|w_1)=0.0036350817\<br>
+p(x|w_2)=0.0032513211\<br>
+p(x|w_3)=0.0035862068\<br>
+p(x|w_4)=0.0034508291\<br>
+$$<br>
+达咩，判断为第一句</p>
+<p>那我们用《遣意二首》再试试？</p>
+<table>
+   <tr>
+      <td>类别</td>
+      <td>似然概率</td>
+   </tr>
+   <tr>
+      <td></td>
+      <td>啭枝黄鸟近</td>
+      <td>泛渚白鸥轻</td>
+      <td>一径野花落</td>
+      <td>孤村春水生</td>
+   </tr>
+   <tr>
+      <td>1</td>
+      <td>0.006136051</td>
+      <td>0.006627693</td>
+      <td>0.006136051</td>
+      <td>0.006417236</td>
+   </tr>
+   <tr>
+      <td>2</td>
+      <td>0.006136051</td>
+      <td>0.006417236</td>
+      <td>0.005739751</td>
+      <td>0.006417236</td>
+   </tr>
+   <tr>
+      <td>3</td>
+      <td>0.007168383</td>
+      <td>0.006461493</td>
+      <td>0.006461493</td>
+      <td>0.006461493</td>
+   </tr>
+   <tr>
+      <td>4</td>
+      <td>0.006461493</td>
+      <td>0.006461493</td>
+      <td>0.006461493</td>
+      <td>0.006009066</td>
+   </tr>
+</table>
+<p>虽然结果不尽人意，但是我们惊奇的发现：<br>
+如果  $w_1$ 类对应第二句; $w_2$ 对应第四句;$w_3$ 类对应第一句; $w_4$ 类对应第三句, 正确率还挺高的。</p>
+<div align="center">
+<img src="https://github.com/patrlean/images/blob/main/preVSreal.png?raw=true" style="zoom:60%;">
+</div>
+<p>这是不是另外一种正确呢？</p>
+<h1><span id="总结">总结</span></h1>
+<p><strong>坑</strong></p>
+<ol>
+<li>文本转拼音有轻声，没有音调标注。只能手工解决。</li>
+<li>统计判别来估计概率密度不太行，样本较少。</li>
+<li>文本指标不容易量化。</li>
+</ol>
+<p><strong>学到了</strong></p>
+<ol>
+<li>复习了python</li>
+</ol>
+<h1><span id="附录">附录</span></h1>
+<p>训练文本资料以及程序代码：<a target="_blank" rel="noopener" href="https://github.com/patrlean/ai-poetry">我的仓库</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%BB%9F%E8%AE%A1%E5%88%A4%E5%88%AB/" rel="tag"># 统计判别</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/03/15/ga-math-model/" rel="prev" title="遗传算法学习笔记">
+      <i class="fa fa-chevron-left"></i> 遗传算法学习笔记
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">问题重述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">问题分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">从文本到数字</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.1.</span> <span class="nav-text">文本信息的选择</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.2.</span> <span class="nav-text">从文本到数字</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.2.1.</span> <span class="nav-text">平仄提取</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.2.2.</span> <span class="nav-text">韵脚提取</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">判断作者</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">判断出现句数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">6.</span> <span class="nav-text">结果分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">7.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">8.</span> <span class="nav-text">附录</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="patrlean"
+      src="https://raw.githubusercontent.com/patrlean/images/main/avatar_keda.jpg">
+  <p class="site-author-name" itemprop="name">patrlean</p>
+  <div class="site-description" itemprop="description">三得利爱喝乌龙茶</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/patrlean" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;patrlean" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom github"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/349361858" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;349361858" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom bilibili"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:patriiicabis@gmail.com" title="E-Mail → mailto:patriiicabis@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom Email"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_44634406" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_44634406" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom CSDN"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://music.163.com/#/user/home?id=588410069" title="NetEase Cloud Music → https:&#x2F;&#x2F;music.163.com&#x2F;#&#x2F;user&#x2F;home?id&#x3D;588410069" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom NetEaseCloudMusic"></i></a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">patrlean</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">38k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">35 分钟</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力激情猛烈爆炸驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : '7JF3q74Xi62JMViy5Bhc3uqJ-MdYXbMMI',
+      appKey     : 'c9puHAmapHdRf9e83usdLViq',
+      placeholder: "你好鸭鸭!",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : 'https://7jf3q74x.api.lncldglobal.com'
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
