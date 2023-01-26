@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="manifest" href="/images/manifest.json">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一个古早的天气预测方法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="卡尔曼滤波 | 天气预测">
+<meta property="og:url" content="http://example.com/2023/01/25/%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2%E5%A4%A9%E6%B0%94%E9%A2%84%E6%B5%8B/index.html">
+<meta property="og:site_name" content="PatrLean 的个人博客">
+<meta property="og:description" content="一个古早的天气预测方法">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/short regression.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/long regression.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/short term weather predict.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/long term weather predict.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/long term weather predict vtest.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/short term weather predict vtest.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/error analysis.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/short regression GFS.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/long regression GFS.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/long term weather predict GFS.png">
+<meta property="article:published_time" content="2023-01-25T15:09:55.000Z">
+<meta property="article:modified_time" content="2023-01-26T13:42:30.929Z">
+<meta property="article:author" content="patrlean">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/patrlean/images/main/short regression.png">
+
+<link rel="canonical" href="http://example.com/2023/01/25/%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2%E5%A4%A9%E6%B0%94%E9%A2%84%E6%B5%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>卡尔曼滤波 | 天气预测 | PatrLean 的个人博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">PatrLean 的个人博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">帕帕鸭 ━((*′д｀)爻(′д｀*))━!!!!</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">4</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">13</span></a>
+
+  </li>
+        <li class="menu-item menu-item-札记">
+
+    <a href="/categories/%E6%9C%AD%E8%AE%B0/" rel="section"><i class="fa fa-fw fa-book"></i>札记</a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-fw fa-link"></i>友链</a>
+
+  </li>
+        <li class="menu-item menu-item-oracle">
+
+    <a href="/oracle/" rel="section"><i class="fa fa-fw fa-key"></i>黑盒子</a>
+
+  </li>
+        <li class="menu-item menu-item-murmur">
+
+    <a href="/Murmur/" rel="section"><i class="fa fa-fw fa-phone"></i>喃喃</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/25/%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2%E5%A4%A9%E6%B0%94%E9%A2%84%E6%B5%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://raw.githubusercontent.com/patrlean/images/main/avatar_keda.jpg">
+      <meta itemprop="name" content="patrlean">
+      <meta itemprop="description" content="三得利爱喝乌龙茶">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PatrLean 的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          卡尔曼滤波 | 天气预测
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-01-25 23:09:55" itemprop="dateCreated datePublished" datetime="2023-01-25T23:09:55+08:00">2023-01-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-01-26 21:42:30" itemprop="dateModified" datetime="2023-01-26T21:42:30+08:00">2023-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2023/01/25/%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2%E5%A4%A9%E6%B0%94%E9%A2%84%E6%B5%8B/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2023/01/25/%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2%E5%A4%A9%E6%B0%94%E9%A2%84%E6%B5%8B/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>14k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>13 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote class="blockquote-center">
+    一个古早的天气预测方法
+</blockquote>
+<span id="more"></span>
+<p>这是随机信号分析四篇课程报告之一，也是我认为较有意思的一篇报告。主要内容是复现一篇与课程内容有关的论文。这篇论文使用卡尔曼滤波预测未来几天天气。</p>
+<h1><span id="天气递推系统">天气递推系统</span></h1>
+<h2><span id="系统假设">系统假设</span></h2>
+<ul>
+<li>
+<p>动态噪声与测量噪声都是随机向量，假定它们是互不相关的、均值为零、方差分别为 $W$, $V$ 的白噪声</p>
+</li>
+<li>
+<p>一段时间内未发生突然性的天气变化因素，即引起天气变化的因素渐进变化。</p>
+</li>
+</ul>
+<h2><span id="卡尔曼滤波递推系统">卡尔曼滤波递推系统</span></h2>
+<p>卡尔曼滤波用于天气预报时，根据陆如华等人研究[1]，考虑到假设中由季节等原因所引起的<br>
+$B$ 变化是渐进的，且有随机性，采用状态方程的简化形式：<br>
+$$B_t = B_{t−1} + \epsilon_{t−1}$$ 其中： $B_t$ 及 $B_{t−1}$ 是 $t$ 及 $t-1$ 时刻的值$\epsilon_{t−1}$ 是动态噪声。</p>
+<p>至于测量方程，可将回归方程作为 KF 中的测量方程。 测量方程的形式：<br>
+$$Y_t = X_tB_t + e_t $$ 其中： $Y_t$ 是预报量( °C) ,$X_t$ 是因子矩阵,$B_t$ 是回归系数 $e_t$ 是测量噪声。</p>
+<p>动态噪声与测量噪声都是随机向量，假定它们是互不相关的、均值为零、方差分别为$W$, $V$ 的白噪声，得到 KF 的递推系统：</p>
+<p>$\hat{Y_t}$ 是$t$时刻的温度预测量，$X_t$ 是$t$时刻的观测因子测量值，$\hat{B_{t-1}}$是上一时刻的观测因子的回归系数矩阵。 $$\hat{Y_t} = X_t \hat{B_{t-1}}<br>
+$$<br>
+由于回归系数矩阵具有误差，因此状态方程的总误差为回归系数矩阵方差$C_{t-1}$与动态噪声方差$W$之和：<br>
+$$R_t = C_{t−1} + W$$<br>
+测量方程的误差方阵为状态方程方差阵经过测量因子$X_k$的变换后加上测量误差方阵$V$<br>
+$$\sigma_t = X_tR_t X_t^T + V$$ 得到卡尔曼增益: $$H_t = R_t X_t^T\sigma_t^{-1}	<br>
+$$<br>
+根据温度的实测值和上一时刻的回归系数矩阵，得到下一时刻的回归系数矩阵<br>
+$$\hat{B_t} = \hat{B_{t-1}} + K_t(Y_t −\hat{Y_t})$$<br>
+最后更新回归系数矩阵的误差方差阵： $$C_t = R_t − H_t\sigma_t K_t^T$$</p>
+<h2><span id="参数说明">参数说明</span></h2>
+<p>收集到的天气数据共有两类，一类是地球表面数据，另一类是高空气象数据。<br>
+表面数据：</p>
+<pre><code>    数据类型           符号                  说明
+</code></pre>
+<hr>
+<pre><code>      温度             $T$                摄氏度 °C
+      相对             $H$               空气相对湿度
+   海平面压力         $SLP$               帕斯卡 Pa
+      风速           $W_&#123;sp&#125;$        千米每小时 km h^−1^
+  云覆盖数据：      $CL,CM,CH$   天空覆盖低、中、高云的百分比
+</code></pre>
+<p>压力所在的位势高度      $h$                   米 m<br>
+位势高度500m处温度   $T_{500}$             摄氏度 °C<br>
+位势高度850m处温度   $T_{850}$             摄氏度 °C<br>
+位势高度500m处压强   $P_{500}$             帕斯卡 Pa<br>
+位势高度850m处压强   $P_{850}$             帕斯卡 Pa</p>
+<p>根据地表温度，空气相对湿度，海平面压力和地面风速作为因子，选择蒙古乌里雅苏台4月13日00UTC至4月29日21UTC每三小时为单位的天气数据进行数据拟合。</p>
+<p>如图 [1] 所示为蒙古乌里雅苏台4月13日至4月29日的气温，风速，空气相对湿度以及气压数据。根据数据拟合得到曲线。</p>
+<div id="蒙古乌利雅苏台短期天气情况及其回归曲线" style="font-size: 14px;text-align: center;"><br><img src="https://raw.githubusercontent.com/patrlean/images/main/short regression.png" width="80%/"><br>图1：蒙古乌利雅苏台短期天气情况及其回归曲线</div>
+<h1><span id="观测方程以及初值的确定">观测方程以及初值的确定</span></h1>
+<p>卡尔曼滤波运行前对于初值 $B_0$、$C_0$以及 $W$ 和 $V$<br>
+都要事先确定，由拟合曲线可知， $$B_0 =<br>
+\begin{bmatrix}<br>
+-20.990\<br>
+0.303\<br>
+0.009\<br>
+\end{bmatrix}$$</p>
+<p>$C_0$ 是 $B_0$ 的误差方差阵，由于 $B_0$ 是从样本资料精确计算得到的，可以假定它与理论值相等，即认为回归系数的初值为系统真值，则其误差方差为零。所以$C_0$ 是 $3 \times 3$的零方阵。</p>
+<p>由于 $W$ 和 $V$ 在进行 KF 运算起始时被确定之后就不能再改变，因此需先计算出 $W$ 和 $V$ 的值。根据陆如华等人研究，$n$ 个因子的系统中 $W$ 由式决定 $$W \approxeq<br>
+\begin{bmatrix}<br>
+\frac{(\Delta B_1)^2}{T} &amp; 0 &amp; \dots &amp; 0 \<br>
+0 &amp;  \frac{(\Delta B_2)^2}{T} &amp; \dots  &amp; 0 \<br>
+\vdots &amp; \vdots &amp; \vdots &amp; \vdots \<br>
+0 &amp; 0 &amp; \dots &amp; \frac{(\Delta B_n)^2}{T}  \<br>
+\end{bmatrix}<br>
+$$ 由上式可见，$W$ 值可用 $B$ 的变化来估算，因此需进行另一次拟合计算，时段取4月13日00UTC至5月9日12UTC，求出$B_t$ ， $$B_t =<br>
+\begin{bmatrix}<br>
+-26.161 \<br>
+0.283 \<br>
+0.012 \<br>
+\end{bmatrix}$$ 由 $B_0$ 和 $B_t$ 的时间间隔 $\Delta T = 28$，因此可求出 $W$ 的近似值为 $$W =<br>
+\begin{bmatrix}<br>
+0.35 &amp;	0	&amp; 0 \<br>
+0 &amp;	5.10e-06 &amp;	0 \<br>
+0 &amp;	0 &amp;	1.51e-07 \<br>
+\end{bmatrix}$$ 长期天气情况及其拟合曲线如图[2]所示。</p>
+<div id="fig:长期天气情况及其回归曲线" style="font-size: 14px;text-align: center;"><br><img src="https://raw.githubusercontent.com/patrlean/images/main/long regression.png" width="80%/"><br>图2：长期天气情况及其回归曲线</div>
+<p>至于测量噪声的方差，根据陆如华等人研究<br>
+$$V = \frac{q}{k -m -1}$$</p>
+<p>其中 $q = \sum_{k=1}^{k} (y_i-\hat{y_i})^2$;$k$ 为样本容量;$m$为量测方程因子数;$y_i$ 为观测值;$\hat{y_i}$为回归方程估算值</p>
+<p>最后求出$V = 16.63$</p>
+<h1><span id="预测结果">预测结果</span></h1>
+<p>卡尔曼滤波初始参数确定后，在 5 月 10 日 00UTC<br>
+开始作不断更新及预报,分别得到短期卡尔曼天气预测结果和长期卡尔曼天气预测结果。</p>
+<h2><span id="短期预测结果">短期预测结果</span></h2>
+<p>从短期结果来看，卡尔曼滤波系统得到的天气预测值与实际观测值在总体趋势上保持一致。在0 5h和18 28h的气温下降段，预测值也呈现出明显的下降趋势。</p>
+<div id="fig:短期天气预测" style="font-size: 14px;text-align: center;"><br><img src="https://raw.githubusercontent.com/patrlean/images/main/short term weather predict.png" width="80%/"><br>图3：短期天气预测</div>
+<h2><span id="长期预测结果">长期预测结果</span></h2>
+<p>从长期结果来看，卡尔曼滤波系统得到的天气预测值与实际观测值在总体趋势上保持一致。在多个实际的气温下降段，预测值也呈现出明显的下降趋势。</p>
+<p>但是从图 [4] 中不难看出，预测值存在过冲现象，即在气温的多个极值点处，预测温度均高于或低于实际测量温度。</p>
+<div id="fig:长期天气预测" style="font-size: 14px;text-align: center;"><br><img src="https://raw.githubusercontent.com/patrlean/images/main/long term weather predict.png" width="80%/"><br>图4：长期天气预测</div>
+<h1><span id="讨论">讨论</span></h1>
+<h2><span id="测量协方差的调校">测量协方差的调校</span></h2>
+<p>通过改变量测噪声方差 $V$ 的值可以对 KF 的特性作出调整，由式可知，如果将量测噪声方差$V$增大，那么 KF 将不太相信实测值，而 $H_t$ 相应会减小，进而影响到回归系数的值，最后使滤波结果较慢去反应实测气温的变化；测量噪声方差减少时，KF 将较相信实测值，滤波结果将较快去反应实测气温的变化。 因此对 $V$ 的值进行调校，进行两个设定的试验，第一个为快反应设定，取 $V/1000$，这是较快反应实测值的变化；第二个为慢反应设定，取 $V*1000$，这是较慢反应实测值的变化</p>
+<p>实际过程中不断地调整$V$的数值从$1e-4V$到$1e+4V$ ,一共绘制出九条曲线。分别对长期天气预测结果和短期天气预测结果进行分析。图[5]与图[6]中最佳预测曲线使用红色进行标注。</p>
+<div id="fig:长期快慢反应" style="font-size: 14px;text-align: center;"><br><img src="https://raw.githubusercontent.com/patrlean/images/main/long term weather predict vtest.png" width="80%/"><br>图5：长期快慢反应卡尔曼预测</div>
+<div id="fig:短期快慢反应" style="font-size: 14px;text-align: center;"><br><img src="https://raw.githubusercontent.com/patrlean/images/main/short term weather predict vtest.png" width="80%/"><br>图6：短期快慢反应卡尔曼预测</div>
+<div id="fig:误差比较" style="font-size: 14px;text-align: center;"><br><img src="https://raw.githubusercontent.com/patrlean/images/main/error analysis.png" width="80%/"><br>图7：误差比较</div><br>
+<p>从最后的误差来看，快反应 KF 对天气实际情况的预测效果最好。</p>
+<h2><span id="参数选取">参数选取</span></h2>
+<p>由于实际过程中影响天气的因素很多，仅仅使用三个因子对天气情况进行预测不稳定性较大。增加天气因子至十个：地表温度，空气相对湿度，地表气压，低空云层覆盖率，中空云层覆盖率，高空云层覆盖率，500米位势温度，500米位势气压，850米位势温度以及850米位势气压。</p>
+<p>再次进行拟合分析得到结果如图[8]和图[9]示。</p>
+<div id="fig:增加因子选取范围后短期回归" style="font-size: 14px;text-align: center;"><br><img src="https://raw.githubusercontent.com/patrlean/images/main/short regression GFS.png" width="80%/"><br>图8：增加因子选取范围后短期回归</div>
+<div id="fig:增加因子选取范围后长期回归" style="font-size: 14px;text-align: center;"><br><img src="https://raw.githubusercontent.com/patrlean/images/main/long regression GFS.png" width="80%/"><br>图9：增加因子选取范围后长期回归</div><br>
+<p>再次建立 KF 递推系统进行分析，得到长期天气预测数据如图[10]</p>
+<div id="fig:长期天气情况预测" style="font-size: 14px;text-align: center;"><br><img src="https://raw.githubusercontent.com/patrlean/images/main/long term weather predict GFS.png" width="80%/"><br>图10：长期天气情况预测</div><br>
+<p>该方法预测结果的绝对值平均误差为2.80°C 与三因子方法绝对值平均误差在快反应 KF 下为1.83°C。因子增加后模型预测误差范围增大，可能是多种因子之间发生共线性或者过拟合造成。</p>
+<h1><span id="结论">结论</span></h1>
+<p>基于卡尔曼滤波的天气预测系统数据量小，同时计算量也小。但是相较于现代的机器学习方法，模型准确度不够高。因此，目前多采用集成学习，神经网络等等方法预测天气。</p>
+<h1><span id="参考文献">参考文献</span></h1>
+<div id="卡尔曼滤波方法在天气预报中的应用">
+	[1] 陆如华 and 何于班, ‘‘卡尔曼滤波方法在天气预报中的应用,” 气象, vol. 20, no. 9, pp. 41–43,1994
+</div>
+<h1><span id="附录">附录</span></h1>
+<h2><span id="卡尔曼天气预测">卡尔曼天气预测</span></h2>
+<figure class="highlight plaintext"><figcaption><span>.matlab language</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br></pre></td><td class="code"><pre><span class="line">clc;clear;close all;</span><br><span class="line">%% 估计初始B参数</span><br><span class="line">Data = readtable(&quot;50915_20220413-20220429.xlsx&quot;);</span><br><span class="line">% 数据读取</span><br><span class="line">temp = flip(Data.Temp_C)&#x27;;</span><br><span class="line">humid = flip(Data.Rel_Hum)&#x27;;</span><br><span class="line">winds = flip(Data.Wins_speed_kmh)&#x27;;</span><br><span class="line">pressure = flip(Data.Pressure_Geopot)&#x27;;</span><br><span class="line">N = length(pressure);</span><br><span class="line">for ii =  1:N</span><br><span class="line">	pressure&#123;ii&#125; = str2double(pressure&#123;ii&#125;(1:6));</span><br><span class="line">	press(ii) = pressure&#123;ii&#125;;</span><br><span class="line">end</span><br><span class="line">hours = 0:3:3 * (N - 1);</span><br><span class="line"></span><br><span class="line">XX = [humid; winds; press]&#x27;;</span><br><span class="line">yy = temp&#x27;;</span><br><span class="line">[b, bint, r] = regress(yy,XX);</span><br><span class="line">y0 = b&#x27; * XX&#x27;;</span><br><span class="line">Q = sum(r.*r);</span><br><span class="line">V = Q / (length(XX) - 3 -1 );</span><br><span class="line"></span><br><span class="line">%%</span><br><span class="line">figure(1)</span><br><span class="line">subplot(411),hold on,</span><br><span class="line">plot(hours,temp,&#x27;g&#x27;);</span><br><span class="line">plot(hours,winds,&#x27;r&#x27;);</span><br><span class="line">legend(&#x27;Temp&#x27;,&#x27;Wind Speed&#x27;)</span><br><span class="line">xlabel(&#x27;hours&#x27;)</span><br><span class="line">title(&#x27;Temp &amp; Wind speed&#x27;)</span><br><span class="line">grid  on;</span><br><span class="line">axis tight;</span><br><span class="line">	</span><br><span class="line">subplot(412)</span><br><span class="line">plot(hours,humid);</span><br><span class="line">legend(&#x27;humidity&#x27;);</span><br><span class="line">xlabel(&#x27;hours&#x27;)</span><br><span class="line">title(&#x27;Humidity&#x27;)</span><br><span class="line">grid on;</span><br><span class="line"></span><br><span class="line">subplot(413)</span><br><span class="line">plot(hours,press);</span><br><span class="line">legend(&#x27;The pressure&#x27;)</span><br><span class="line">xlabel(&#x27;hours&#x27;)</span><br><span class="line">title(&#x27;Pressure&#x27;)</span><br><span class="line">grid on;</span><br><span class="line"></span><br><span class="line">subplot(414),hold on,</span><br><span class="line">plot(hours,y0);</span><br><span class="line">plot(hours,temp);</span><br><span class="line">legend(&#x27;Regression temp&#x27;,&#x27;Real temp&#x27;);</span><br><span class="line">xlabel(&#x27;hours&#x27;)</span><br><span class="line">title(&#x27;Regression temp result&#x27;);</span><br><span class="line">grid on;</span><br><span class="line">% saveas(gcf,&#x27;short regression.eps&#x27;)</span><br><span class="line"></span><br><span class="line">%% 估计误差参数</span><br><span class="line">Data = readtable(&quot;50915_20220430-20220509.xls&quot;);</span><br><span class="line">% 数据读取</span><br><span class="line">temp = [temp flip(Data.Temp_C)&#x27;];</span><br><span class="line">humid = [humid flip(Data.Rel_Hum)&#x27;];</span><br><span class="line">winds = [winds flip(Data.Wins_speed_kmh)&#x27;];</span><br><span class="line">pressureNew = flip(Data.Pressure_Geopot)&#x27;;</span><br><span class="line">dt = length(pressureNew);</span><br><span class="line">for ii =  1:dt</span><br><span class="line">	pressureNew&#123;ii&#125; = str2double(pressureNew&#123;ii&#125;(1:6));</span><br><span class="line">	pressNew(ii) = pressureNew&#123;ii&#125;;</span><br><span class="line">end</span><br><span class="line">press = [press pressNew];</span><br><span class="line">hours = 0:3:3 * (length(temp) - 1);</span><br><span class="line">%回归</span><br><span class="line">XX = [humid; winds; press]&#x27;;</span><br><span class="line">yy = temp&#x27;;</span><br><span class="line">[bt, bint, rt] = regress(yy,XX);</span><br><span class="line">y0 = bt&#x27; * XX&#x27;;</span><br><span class="line"></span><br><span class="line">W = eye(3) .* (bt - b).^2 / dt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">%%</span><br><span class="line">figure(2)</span><br><span class="line"></span><br><span class="line">subplot(411),hold on,</span><br><span class="line">plot(hours,temp,&#x27;g&#x27;);</span><br><span class="line">plot(hours,winds,&#x27;r&#x27;);</span><br><span class="line">legend(&#x27;Temp&#x27;,&#x27;Wind Speed&#x27;)</span><br><span class="line">title(&#x27;Temp &amp; Wind speed&#x27;)</span><br><span class="line">xlabel(&#x27;hours&#x27;)</span><br><span class="line">grid  on;</span><br><span class="line">axis tight;</span><br><span class="line">	</span><br><span class="line">subplot(412)</span><br><span class="line">plot(hours,humid);</span><br><span class="line">legend(&#x27;humidity&#x27;);</span><br><span class="line">xlabel(&#x27;hours&#x27;)</span><br><span class="line">title(&#x27;Humidity&#x27;)</span><br><span class="line">grid on;</span><br><span class="line"></span><br><span class="line">subplot(413)</span><br><span class="line">plot(hours,press);</span><br><span class="line">legend(&#x27;The pressure&#x27;)</span><br><span class="line">xlabel(&#x27;hours&#x27;)</span><br><span class="line">title(&#x27;Pressure&#x27;)</span><br><span class="line">grid on;</span><br><span class="line"></span><br><span class="line">subplot(414),hold on,</span><br><span class="line">plot(hours,y0);</span><br><span class="line">plot(hours,temp);</span><br><span class="line">legend(&#x27;Regression temp&#x27;,&#x27;Real temp&#x27;);</span><br><span class="line">xlabel(&#x27;hours&#x27;)</span><br><span class="line">title(&#x27;Regression temp result&#x27;);</span><br><span class="line">grid on;</span><br><span class="line">saveas(gcf,&#x27;long regression.eps&#x27;)</span><br><span class="line">%% 观测数据读取</span><br><span class="line">Data = readtable(&quot;50915_20220510-20220513.xls&quot;);</span><br><span class="line">% 数据读取</span><br><span class="line">% 数据读取</span><br><span class="line">temp = [flip(Data.Temp_C)&#x27;];</span><br><span class="line">humid = [ flip(Data.Rel_Hum)&#x27;];</span><br><span class="line">winds = [flip(Data.Wins_speed_kmh)&#x27;];</span><br><span class="line">pressureNew = flip(Data.Pressure_Geopot)&#x27;;</span><br><span class="line">dt = length(pressureNew);</span><br><span class="line">pressNew = zeros(1,dt); </span><br><span class="line">for ii =  1:dt</span><br><span class="line">	pressureNew&#123;ii&#125; = str2double(pressureNew&#123;ii&#125;(1:6));</span><br><span class="line">	pressNew(ii) = pressureNew&#123;ii&#125;;</span><br><span class="line">end</span><br><span class="line">press = [pressNew];</span><br><span class="line">hours = 0:3:3 * (length(temp) - 1);</span><br><span class="line">%回归</span><br><span class="line">Xk = [humid; winds; press]&#x27;;</span><br><span class="line">Yk = temp&#x27;;</span><br><span class="line">%% kalman filter</span><br><span class="line">n = 3;</span><br><span class="line">m = 1;</span><br><span class="line">Len = dt;</span><br><span class="line"></span><br><span class="line">B(:,1) = b&#x27;;</span><br><span class="line">wk = W;</span><br><span class="line">vk = V;</span><br><span class="line">yk(1) = Yk(1); % 预测值</span><br><span class="line">C = zeros(n,n);</span><br><span class="line">for ii = 2:Len</span><br><span class="line">	yk(ii) = Xk(ii,:) * B(:,ii-1);</span><br><span class="line">	Pk1 = Xk(ii,:) * (C + wk) * Xk(ii,:)&#x27; + vk;</span><br><span class="line">	Hk =  (C + wk) * Xk(ii,:)&#x27;  / Pk1;</span><br><span class="line">	B(:,ii) = B(:,ii-1) + Hk *  (Yk(ii) -  yk(ii));</span><br><span class="line">	C = C + wk - Hk * Pk1 * Hk&#x27;;</span><br><span class="line">	Err(ii-1) = Yk(ii) - yk(ii);</span><br><span class="line">end</span><br><span class="line">%%</span><br><span class="line">% 短期预测</span><br><span class="line">ShortTerm = 12;</span><br><span class="line">figure(3),hold on,</span><br><span class="line">plot(0:3:3*(ShortTerm - 1), Yk(1:ShortTerm),&#x27;r--&#x27;);plot(0:3:3*(ShortTerm - 1),yk(1:ShortTerm),&#x27;b&#x27;);</span><br><span class="line">title(&#x27;The result of kalman weather prediction in short term&#x27;)</span><br><span class="line">legend(&#x27;observe signal&#x27;,&#x27;predict signal&#x27;)</span><br><span class="line">xlabel(&#x27;hours 3h&#x27;),ylabel(&#x27;temp&#x27;)</span><br><span class="line">grid on</span><br><span class="line">saveas(gcf,&#x27;short term weather predict.eps&#x27;)</span><br><span class="line">% 长期预测</span><br><span class="line">LongTerm = length(Yk);</span><br><span class="line">figure(4),hold on,</span><br><span class="line">plot(0:3:3*(LongTerm - 1), Yk(1:LongTerm),&#x27;r--&#x27;);plot(0:3:3*(LongTerm - 1),yk(1:LongTerm),&#x27;b&#x27;);</span><br><span class="line">title(&#x27;The result of kalman weather prediction in long term&#x27;)</span><br><span class="line">legend(&#x27;observe signal&#x27;,&#x27;predict signal&#x27;)</span><br><span class="line">xlabel(&#x27;hours 3h&#x27;),ylabel(&#x27;temp&#x27;)</span><br><span class="line">grid on</span><br><span class="line">saveas(gcf,&#x27;long term weather predict.eps&#x27;)</span><br><span class="line">% 绝对误差分析</span><br><span class="line">figure(5),hold on,</span><br><span class="line">plot(Err,&#x27;r&#x27;);</span><br><span class="line">title(&#x27;Error analysis&#x27;)</span><br><span class="line">xlabel(&#x27;hours 3h&#x27;),ylabel(&#x27;temp&#x27;)</span><br><span class="line">legend(&#x27;Error bewteen predict value and observed value&#x27;)</span><br><span class="line">saveas(gcf,&#x27;error analysis.eps&#x27;)</span><br><span class="line">grid on 	</span><br></pre></td></tr></table></figure>
+<h2><span id="误差v比较">误差$V$比较</span></h2>
+<figure class="highlight plaintext"><figcaption><span>.matlab language</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br></pre></td><td class="code"><pre><span class="line">clc;clear;close all;</span><br><span class="line">%% vtest</span><br><span class="line">%% 估计初始B参数</span><br><span class="line">Data = readtable(&quot;50915_20220413-20220429.xlsx&quot;);</span><br><span class="line">% 数据读取</span><br><span class="line">temp = flip(Data.Temp_C)&#x27;;</span><br><span class="line">humid = flip(Data.Rel_Hum)&#x27;;</span><br><span class="line">winds = flip(Data.Wins_speed_kmh)&#x27;;</span><br><span class="line">pressure = flip(Data.Pressure_Geopot)&#x27;;</span><br><span class="line">N = length(pressure);</span><br><span class="line">for ii =  1:N</span><br><span class="line">	pressure&#123;ii&#125; = str2double(pressure&#123;ii&#125;(1:6));</span><br><span class="line">	press(ii) = pressure&#123;ii&#125;;</span><br><span class="line">end</span><br><span class="line">hours = 0:3:3 * (N - 1);</span><br><span class="line"></span><br><span class="line">XX1 = [humid; winds; press]&#x27;;</span><br><span class="line">yy = temp&#x27;;</span><br><span class="line">[b, bint, r1] = regress(yy,XX1);</span><br><span class="line">y0 = b&#x27; * XX1&#x27;;</span><br><span class="line">Q = sum(r1.*r1);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">%%</span><br><span class="line">figure(1)</span><br><span class="line">subplot(411),hold on,</span><br><span class="line">plot(hours,temp,&#x27;g&#x27;);</span><br><span class="line">plot(hours,winds,&#x27;r&#x27;);</span><br><span class="line">legend(&#x27;Temp&#x27;,&#x27;Wind Speed&#x27;)</span><br><span class="line">xlabel(&#x27;hours&#x27;)</span><br><span class="line">title(&#x27;Temp &amp; Wind speed&#x27;)</span><br><span class="line">grid  on;</span><br><span class="line">axis tight;</span><br><span class="line">	</span><br><span class="line">subplot(412)</span><br><span class="line">plot(hours,humid);</span><br><span class="line">legend(&#x27;humidity&#x27;);</span><br><span class="line">xlabel(&#x27;hours&#x27;)</span><br><span class="line">title(&#x27;Humidity&#x27;)</span><br><span class="line">grid on;</span><br><span class="line"></span><br><span class="line">subplot(413)</span><br><span class="line">plot(hours,press);</span><br><span class="line">legend(&#x27;The pressure&#x27;)</span><br><span class="line">xlabel(&#x27;hours&#x27;)</span><br><span class="line">title(&#x27;Pressure&#x27;)</span><br><span class="line">grid on;</span><br><span class="line"></span><br><span class="line">subplot(414),hold on,</span><br><span class="line">plot(hours,y0);</span><br><span class="line">plot(hours,temp);</span><br><span class="line">legend(&#x27;Regression temp&#x27;,&#x27;Real temp&#x27;);</span><br><span class="line">xlabel(&#x27;hours&#x27;)</span><br><span class="line">title(&#x27;Regression temp result&#x27;);</span><br><span class="line">grid on;</span><br><span class="line">% saveas(gcf,&#x27;short regression.eps&#x27;)</span><br><span class="line"></span><br><span class="line">%% 估计误差参数</span><br><span class="line">Data = readtable(&quot;50915_20220430-20220509.xls&quot;);</span><br><span class="line">% 数据读取</span><br><span class="line">temp = [temp flip(Data.Temp_C)&#x27;];</span><br><span class="line">humid = [humid flip(Data.Rel_Hum)&#x27;];</span><br><span class="line">winds = [winds flip(Data.Wins_speed_kmh)&#x27;];</span><br><span class="line">pressureNew = flip(Data.Pressure_Geopot)&#x27;;</span><br><span class="line">dt = length(pressureNew);</span><br><span class="line">for ii =  1:dt</span><br><span class="line">	pressureNew&#123;ii&#125; = str2double(pressureNew&#123;ii&#125;(1:6));</span><br><span class="line">	pressNew(ii) = pressureNew&#123;ii&#125;;</span><br><span class="line">end</span><br><span class="line">press = [press pressNew];</span><br><span class="line">hours = 0:3:3 * (length(temp) - 1);</span><br><span class="line">%回归</span><br><span class="line">XX = [humid; winds; press]&#x27;;</span><br><span class="line">yy = temp&#x27;;</span><br><span class="line">[bt, bint, rt] = regress(yy,XX);</span><br><span class="line">y0 = bt&#x27; * XX&#x27;;</span><br><span class="line"></span><br><span class="line">W = eye(3) .* (bt - b).^2 / dt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">%%</span><br><span class="line">figure(2)</span><br><span class="line"></span><br><span class="line">subplot(411),hold on,</span><br><span class="line">plot(hours,temp,&#x27;g&#x27;);</span><br><span class="line">plot(hours,winds,&#x27;r&#x27;);</span><br><span class="line">legend(&#x27;Temp&#x27;,&#x27;Wind Speed&#x27;)</span><br><span class="line">title(&#x27;Temp &amp; Wind speed&#x27;)</span><br><span class="line">xlabel(&#x27;hours&#x27;)</span><br><span class="line">grid  on;</span><br><span class="line">axis tight;</span><br><span class="line">	</span><br><span class="line">subplot(412)</span><br><span class="line">plot(hours,humid);</span><br><span class="line">legend(&#x27;humidity&#x27;);</span><br><span class="line">xlabel(&#x27;hours&#x27;)</span><br><span class="line">title(&#x27;Humidity&#x27;)</span><br><span class="line">grid on;</span><br><span class="line"></span><br><span class="line">subplot(413)</span><br><span class="line">plot(hours,press);</span><br><span class="line">legend(&#x27;The pressure&#x27;)</span><br><span class="line">xlabel(&#x27;hours&#x27;)</span><br><span class="line">title(&#x27;Pressure&#x27;)</span><br><span class="line">grid on;</span><br><span class="line"></span><br><span class="line">subplot(414),hold on,</span><br><span class="line">plot(hours,y0);</span><br><span class="line">plot(hours,temp);</span><br><span class="line">legend(&#x27;Regression temp&#x27;,&#x27;Real temp&#x27;);</span><br><span class="line">xlabel(&#x27;hours&#x27;)</span><br><span class="line">title(&#x27;Regression temp result&#x27;);</span><br><span class="line">grid on;</span><br><span class="line">% saveas(gcf,&#x27;long regression.eps&#x27;)</span><br><span class="line">%% 观测数据读取</span><br><span class="line">Data = readtable(&quot;50915_20220510-20220513.xls&quot;);</span><br><span class="line">% 数据读取</span><br><span class="line">% 数据读取</span><br><span class="line">temp = [flip(Data.Temp_C)&#x27;];</span><br><span class="line">humid = [ flip(Data.Rel_Hum)&#x27;];</span><br><span class="line">winds = [flip(Data.Wins_speed_kmh)&#x27;];</span><br><span class="line">pressureNew = flip(Data.Pressure_Geopot)&#x27;;</span><br><span class="line">dt = length(pressureNew);</span><br><span class="line">pressNew = zeros(1,dt); </span><br><span class="line">for ii =  1:dt</span><br><span class="line">	pressureNew&#123;ii&#125; = str2double(pressureNew&#123;ii&#125;(1:6));</span><br><span class="line">	pressNew(ii) = pressureNew&#123;ii&#125;;</span><br><span class="line">end</span><br><span class="line">press = [pressNew];</span><br><span class="line">hours = 0:3:3 * (length(temp) - 1);</span><br><span class="line">%回归</span><br><span class="line">Xk = [humid; winds; press]&#x27;;</span><br><span class="line">Yk = temp&#x27;;</span><br><span class="line">%% kalman filter for V</span><br><span class="line">N = 6;</span><br><span class="line">for jj = 1:1:N</span><br><span class="line">	Vtest = 10^(jj-4);</span><br><span class="line">	V = Q / (length(XX1) - 3 -1 ) * Vtest;</span><br><span class="line"></span><br><span class="line">	n = 3;</span><br><span class="line">	m = 1;</span><br><span class="line">	Len = dt;</span><br><span class="line">	</span><br><span class="line">	B(:,1) = b&#x27;;</span><br><span class="line">	wk = W;</span><br><span class="line">	vk = V;</span><br><span class="line">	yk(jj,1) = Yk(1); % 预测值</span><br><span class="line">	C = zeros(n,n);</span><br><span class="line">	for ii = 2:Len</span><br><span class="line">		yk(jj,ii) = Xk(ii,:) * B(:,ii-1);</span><br><span class="line">		Pk1 = Xk(ii,:) * (C + wk) * Xk(ii,:)&#x27; + vk;</span><br><span class="line">		Hk =  (C + wk) * Xk(ii,:)&#x27;  / Pk1;</span><br><span class="line">		B(:,ii) = B(:,ii-1) + Hk *  (Yk(ii) -  yk(jj,ii));</span><br><span class="line">		C = C + wk - Hk * Pk1 * Hk&#x27;;</span><br><span class="line">		Err(jj,ii-1) = Yk(ii) - yk(jj,ii);</span><br><span class="line">	end</span><br><span class="line">end</span><br><span class="line">% 误差平方和</span><br><span class="line">ErrSS = sum(Err.*Err, 2);</span><br><span class="line">[m, minIndex] = min(ErrSS);</span><br><span class="line"></span><br><span class="line">%%</span><br><span class="line">% 短期预测 条带图</span><br><span class="line">ShortTerm = 12;</span><br><span class="line"></span><br><span class="line">figure(3),hold on,</span><br><span class="line">ribbon([Yk(1:ShortTerm) yk(1:N,1:ShortTerm)&#x27;]);</span><br><span class="line">title(&#x27;The result of kalman weather prediction in short term&#x27;)</span><br><span class="line">% legend(&#x27;observe signal&#x27;,&#x27;predict signal&#x27;)</span><br><span class="line">xlabel(&#x27;V&#x27;),ylabel(&#x27;hours&#x27;),zlabel(&#x27;temp&#x27;)</span><br><span class="line">grid on</span><br><span class="line">colorbar</span><br><span class="line">% colormap default</span><br><span class="line">% saveas(gcf,&#x27;short term weather predict ribbon.eps&#x27;)</span><br><span class="line"></span><br><span class="line">% 短期预测 折线图</span><br><span class="line">figure(4),hold on,</span><br><span class="line">plot(0:3:3*(ShortTerm - 1), Yk(1:ShortTerm),&#x27;m:&#x27;,&#x27;LineWidth&#x27;,1);plot(0:3:3*(ShortTerm - 1),yk(1:N,1:ShortTerm),&#x27;b--&#x27;);</span><br><span class="line">plot(0:3:3*(ShortTerm - 1),yk(minIndex,1:ShortTerm),&#x27;r&#x27;,&#x27;LineWidth&#x27;,1);</span><br><span class="line">title(&#x27;The result of kalman weather prediction in short term&#x27;)</span><br><span class="line">legend(&#x27;observe signal&#x27;,&#x27;predict signal&#x27;)</span><br><span class="line">xlabel(&#x27;hours 3h&#x27;),ylabel(&#x27;temp&#x27;)</span><br><span class="line">grid on;</span><br><span class="line">saveas(gcf,&#x27;short term weather predict vtest.eps&#x27;)</span><br><span class="line"></span><br><span class="line">% 长期预测 折线图</span><br><span class="line">LongTerm = length(Yk);</span><br><span class="line">figure(5),hold on,</span><br><span class="line">plot(0:3:3*(LongTerm - 1), Yk(1:LongTerm),&#x27;m:&#x27;,&#x27;LineWidth&#x27;,1);plot(0:3:3*(LongTerm - 1),yk(1:N,1:LongTerm),&#x27;b--&#x27;);</span><br><span class="line">plot(0:3:3*(LongTerm - 1),yk(minIndex,1:LongTerm),&#x27;r&#x27;,&#x27;LineWidth&#x27;,1);</span><br><span class="line">grid on</span><br><span class="line">title(&#x27;The result of kalman weather prediction in long term&#x27;)</span><br><span class="line">legend(&#x27;observe signal&#x27;,&#x27;predict signal&#x27;)</span><br><span class="line">xlabel(&#x27;hours 3h&#x27;),ylabel(&#x27;temp&#x27;)</span><br><span class="line">saveas(gcf,&#x27;long term weather predict vtest.eps&#x27;)</span><br><span class="line"></span><br><span class="line">% 长期预测 条带图</span><br><span class="line"></span><br><span class="line">figure(6),hold on,</span><br><span class="line">y = 1:28</span><br><span class="line">x = ones(28,1) * (1:N+1);</span><br><span class="line">z = [Yk(1:LongTerm) yk(1:N,1:LongTerm)&#x27;];</span><br><span class="line">plot3(x,y,z,&#x27;b&#x27;);</span><br><span class="line">title(&#x27;The result of kalman weather prediction in long term&#x27;)</span><br><span class="line">% legend(&#x27;observe signal&#x27;,&#x27;predict signal&#x27;)</span><br><span class="line">xlabel(&#x27;V&#x27;),ylabel(&#x27;hours&#x27;),zlabel(&#x27;temp&#x27;)</span><br><span class="line">grid on</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">% 绝对误差分析</span><br><span class="line">figure(7),hold on,</span><br><span class="line">plot(Err&#x27;,&#x27;b--&#x27;);plot(Err(minIndex,:)&#x27;,&#x27;r&#x27;,&#x27;LineWidth&#x27;,1);grid on </span><br><span class="line">title(&#x27;Error analysis&#x27;)</span><br><span class="line">xlabel(&#x27;hours 3h&#x27;),ylabel(&#x27;temp&#x27;)</span><br><span class="line">legend(&#x27;Error bewteen predict value and observed value&#x27;)</span><br><span class="line">% saveas(gcf,&#x27;error analysis.eps&#x27;)</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/12/31/%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%932022/" rel="prev" title="2022年终总结">
+      <i class="fa fa-chevron-left"></i> 2022年终总结
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">天气递推系统</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text">系统假设</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.2.</span> <span class="nav-text">卡尔曼滤波递推系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.3.</span> <span class="nav-text">参数说明</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">观测方程以及初值的确定</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">预测结果</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.1.</span> <span class="nav-text">短期预测结果</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.2.</span> <span class="nav-text">长期预测结果</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">讨论</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.1.</span> <span class="nav-text">测量协方差的调校</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.2.</span> <span class="nav-text">参数选取</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">结论</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">6.</span> <span class="nav-text">参考文献</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">7.</span> <span class="nav-text">附录</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">7.1.</span> <span class="nav-text">卡尔曼天气预测</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">7.2.</span> <span class="nav-text">误差$V$比较</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="patrlean"
+      src="https://raw.githubusercontent.com/patrlean/images/main/avatar_keda.jpg">
+  <p class="site-author-name" itemprop="name">patrlean</p>
+  <div class="site-description" itemprop="description">三得利爱喝乌龙茶</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/patrlean" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;patrlean" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom github"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/349361858" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;349361858" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom bilibili"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:patriiicabis@gmail.com" title="E-Mail → mailto:patriiicabis@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom Email"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_44634406" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_44634406" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom CSDN"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://music.163.com/#/user/home?id=588410069" title="NetEase Cloud Music → https:&#x2F;&#x2F;music.163.com&#x2F;#&#x2F;user&#x2F;home?id&#x3D;588410069" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom NetEaseCloudMusic"></i></a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">patrlean</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">45k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">41 分钟</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力激情猛烈爆炸驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : '7JF3q74Xi62JMViy5Bhc3uqJ-MdYXbMMI',
+      appKey     : 'c9puHAmapHdRf9e83usdLViq',
+      placeholder: "你好鸭鸭!",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : 'https://7jf3q74x.api.lncldglobal.com'
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
