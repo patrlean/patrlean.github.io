@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="manifest" href="/images/manifest.json">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一次参加阿布扎比机器人大赛の记录">
+<meta property="og:type" content="article">
+<meta property="og:title" content="阿布扎比无人机项目">
+<meta property="og:url" content="http://example.com/2021/10/23/abudhabi-drone-competition/index.html">
+<meta property="og:site_name" content="Tianyou Zhao 的个人博客">
+<meta property="og:description" content="一次参加阿布扎比机器人大赛の记录">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20210719150335190.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDYzNDQwNg==,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2021071915035581.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDYzNDQwNg==,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20210719150424614.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDYzNDQwNg==,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20210720125904646.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDYzNDQwNg==,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/828a144c05124dc9885e7762669d2c1d.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDYzNDQwNg==,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/IMG_20211009_222825.jpg">
+<meta property="article:published_time" content="2021-10-23T06:38:00.000Z">
+<meta property="article:modified_time" content="2023-10-22T08:37:09.200Z">
+<meta property="article:author" content="Tianyou">
+<meta property="article:tag" content="drone">
+<meta property="article:tag" content="image recognition">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20210719150335190.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDYzNDQwNg==,size_16,color_FFFFFF,t_70#pic_center">
+
+<link rel="canonical" href="http://example.com/2021/10/23/abudhabi-drone-competition/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>阿布扎比无人机项目 | Tianyou Zhao 的个人博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Tianyou Zhao 的个人博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">4</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">15</span></a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-fw fa-link"></i>友链</a>
+
+  </li>
+        <li class="menu-item menu-item-oracle">
+
+    <a href="/oracle/" rel="section"><i class="fa fa-fw fa-key"></i>黑盒子</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/10/23/abudhabi-drone-competition/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://raw.githubusercontent.com/patrlean/images/main/IMG_2343.jpg">
+      <meta itemprop="name" content="Tianyou">
+      <meta itemprop="description" content="三得利爱喝乌龙茶">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tianyou Zhao 的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          阿布扎比无人机项目
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-10-23 14:38:00" itemprop="dateCreated datePublished" datetime="2021-10-23T14:38:00+08:00">2021-10-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-10-22 16:37:09" itemprop="dateModified" datetime="2023-10-22T16:37:09+08:00">2023-10-22</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/project/" itemprop="url" rel="index"><span itemprop="name">project</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2021/10/23/abudhabi-drone-competition/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/10/23/abudhabi-drone-competition/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>10k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>9 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote class="blockquote-center">
+一次参加阿布扎比机器人大赛の记录
+</blockquote>
+<span id="more"></span>
+<p>比赛分为三个部分，巡线，避障和跟随目标。</p>
+<h1><span id="无人机巡线">无人机巡线</span></h1>
+<p>巡线部分识别线条颜色进行跟随。</p>
+<h2><span id="rgb-gthsv">RGB-&gt;HSV</span></h2>
+<p>RGB颜色分类通过三种颜色通道（R红、G绿、B蓝）的变化以及之间的叠加来得到各种各样的颜色。采用RGB方式编码，所有的颜色都可以用这三个颜色分量来表示。</p>
+<p>这样编码方式几乎可以得到人眼能够感知到的所有颜色。但是三种颜色分量的值随着环境亮度的变化会有很大的变化。为了克服不同颜色分量在不同环境亮度下数值的波动，可以采用一种新的编码方式HSV。</p>
+<p>HSV颜色模型使用H色调、S饱和度、V明度三种颜色参数。使用这种颜色模型的好处是亮度由V名都参数表示，H色调不受亮度而波动。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#将图像转化为HSV格式</span></span><br><span class="line">img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20210719150335190.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDYzNDQwNg==,size_16,color_FFFFFF,t_70#pic_center" alt="原图"><br>
+<img src="https://img-blog.csdnimg.cn/2021071915035581.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDYzNDQwNg==,size_16,color_FFFFFF,t_70#pic_center" alt="HSV"></p>
+<p>补充资料：<br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/hanshanbuleng/article/details/80383813">从 RGB 到 HSV 的转换详细介绍</a><br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/cumt30111/article/details/107803075">在Python中使用OpenCV将RGB格式的图像转换为HSV格式的图像</a><br>
+此外，根据目标颜色的HSV数值，我们设定一个HSV范围。在这个范围内的像素点是我们的目标像素点，范围之外的像素点则排除。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#设定颜色HSV数值范围</span></span><br><span class="line"><span class="comment">#np.array存储数组更加高效</span></span><br><span class="line">sensitivity = <span class="number">20</span></span><br><span class="line">blue_lower = np.array([<span class="number">120</span>-sensitivity,<span class="number">100</span>,<span class="number">100</span>])</span><br><span class="line">blue_upper = np.array([<span class="number">120</span>+sensitivity,<span class="number">255</span>,<span class="number">255</span>])</span><br></pre></td></tr></table></figure>
+<h2><span id="二值化">二值化</span></h2>
+<p>根据颜色我们找出目标线条，目标线条以外的所有物体都可以被忽略。这一步我们用1标注我们的目标，用0标注目标意外的所有物体。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#去除颜色范围外的其他颜色</span></span><br><span class="line">img_mask = cv2.inRange(img_hsv,blue_lower,blue_upper)</span><br><span class="line">cv_show(img_mask)</span><br><span class="line">cv2.imwrite(<span class="string">&#x27;IMG_MASK.jpg&#x27;</span>,img_mask)</span><br><span class="line"><span class="comment">#二值化操作</span></span><br><span class="line">ret,img_binary = cv2.threshold(img_mask, <span class="number">0</span>, <span class="number">255</span>, cv2.THRESH_BINARY)</span><br><span class="line">cv_show(img_binary)</span><br><span class="line">cv2.imwrite(<span class="string">&#x27;IMG_Bin.jpg&#x27;</span>,img_binary)</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20210719150424614.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDYzNDQwNg==,size_16,color_FFFFFF,t_70#pic_center" alt="BINARY"></p>
+<h2><span id="碎片填补">碎片填补</span></h2>
+<p>图片经过二值化，仍然存在黑色空洞。原因是拍摄时部分位置反光严重，使图片上呈现高亮度的白色。通过判断白色区域是否为连通区域。如果是，则连通区域内包含的黑色区域也处理为白色区域。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#碎片填充</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">FillHole</span>(<span class="params">img,SavePath</span>):</span></span><br><span class="line">    im_in = img</span><br><span class="line">    <span class="comment"># 复制 im_in 图像</span></span><br><span class="line">    im_floodfill = im_in.copy()    </span><br><span class="line">    <span class="comment"># Mask 用于 floodFill，官方要求长宽+2</span></span><br><span class="line">    h, w = im_in.shape[:<span class="number">2</span>]</span><br><span class="line">    mask = np.zeros((h+<span class="number">2</span>, w+<span class="number">2</span>), np.uint8)    </span><br><span class="line">    <span class="comment"># floodFill函数中的seedPoint必须是背景</span></span><br><span class="line">    isbreak = <span class="literal">False</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(im_floodfill.shape[<span class="number">0</span>]):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(im_floodfill.shape[<span class="number">1</span>]):</span><br><span class="line">            <span class="keyword">if</span>(im_floodfill[i][j]==<span class="number">0</span>):</span><br><span class="line">                seedPoint=(i,j)</span><br><span class="line">                isbreak = <span class="literal">True</span></span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">if</span>(isbreak):</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    <span class="comment"># 得到im_floodfill</span></span><br><span class="line">    cv2.floodFill(im_floodfill, mask, seedPoint, <span class="number">255</span>);</span><br><span class="line">    <span class="comment"># 得到im_floodfill的逆im_floodfill_inv</span></span><br><span class="line">    im_floodfill_inv = cv2.bitwise_not(im_floodfill)</span><br><span class="line">    <span class="comment"># 把im_in、im_floodfill_inv这两幅图像结合起来得到前景</span></span><br><span class="line">    im_out = im_in | im_floodfill_inv</span><br><span class="line">    cv2.imwrite(SavePath, im_out)</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20210720125904646.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDYzNDQwNg==,size_16,color_FFFFFF,t_70#pic_center" alt="fillhole"><br>
+补充链接-&gt;<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_42181588/article/details/89467478">python_opencv实现图像分割孔洞填充后处理</a></p>
+<h2><span id="轮廓提取">轮廓提取</span></h2>
+<h2><span id="跟随控制线">跟随控制线</span></h2>
+<h1><span id="跟踪小球">跟踪小球</span></h1>
+<p>如何让机器人识别面前的绿色小球并且进行自动跟随？</p>
+<p>先把问题拆成两个子问题。第一，识别绿色小球；第二，自动跟随。</p>
+<h2><span id="目标识别">目标识别</span></h2>
+<p>目标识别分为三步：</p>
+<ol>
+<li>图像预处理（定义结构元素，HSV 转换，腐蚀与膨胀）</li>
+<li>轮廓检测</li>
+<li>矩形绘制</li>
+</ol>
+<h3><span id="图像预处理">图像预处理</span></h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 定义结构化元素</span></span><br><span class="line">    kernel = cv2.getStructuringElement(cv2.MORPH_RECT,(<span class="number">5</span>,<span class="number">5</span>))</span><br></pre></td></tr></table></figure>
+<p>我们使用<code>cv2.getStructuringElement</code>函数生成结构化元素。<br>
+该函数需要两个参数。第一个参数，控制元素的形状。第二个参数，控制元素的大小。<br>
+详细用法指路——&gt; <a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_45939019/article/details/104394248">opencv-python结构化元素cv2.getStructuringElement()</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 设定颜色HSV数值范围</span></span><br><span class="line">   sensity = <span class="number">10</span></span><br><span class="line">   green_lower = np.array([<span class="number">50</span>-sensity,<span class="number">43</span>,<span class="number">46</span>])</span><br><span class="line">   green_upper = np.array([<span class="number">60</span>+sensity,<span class="number">255</span>,<span class="number">255</span>])</span><br><span class="line">   <span class="comment"># 将图像转成HSV颜色空间</span></span><br><span class="line">   hsv_frame = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)</span><br><span class="line">   <span class="comment"># 基于颜色的物体提取</span></span><br><span class="line">   mask = cv2.inRange(hsv_frame, green_lower,green_upper)</span><br><span class="line">   mask2 = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)</span><br><span class="line">   mask3 = cv2.morphologyEx(mask2, cv2.MORPH_CLOSE, kernel)</span><br><span class="line">   <span class="comment"># 缝隙填充</span></span><br><span class="line">   mask4 = FillHole(mask3)</span><br><span class="line">   mask5 = cv_erodedAndDilated(mask4)</span><br><span class="line">   <span class="comment"># 轮廓检测</span></span><br><span class="line">   cnt,heridency = cv2.findContours(mask5,</span><br><span class="line">                                    cv2.RETR_EXTERNAL,</span><br><span class="line">                                    cv2.CHAIN_APPROX_SIMPLE)</span><br><span class="line"> 	<span class="comment"># 使用面积最大区域</span></span><br><span class="line">   maxArea = <span class="number">0</span></span><br><span class="line">   maxIndex = <span class="number">0</span></span><br><span class="line">   <span class="keyword">for</span> i, j <span class="keyword">in</span> <span class="built_in">enumerate</span>(cnt):</span><br><span class="line">       area = cv2.contourArea(j)</span><br><span class="line">       <span class="keyword">if</span> area &gt; maxArea:</span><br><span class="line">           maxArea = area</span><br><span class="line">           maxIndex = i</span><br><span class="line">   cv2.drawContours(img,cnt,maxIndex,(<span class="number">255</span>,<span class="number">0</span>,<span class="number">255</span>),<span class="number">10</span>)</span><br><span class="line">   <span class="comment"># x，y是矩阵左上点的坐标，w，h是矩阵的宽和高</span></span><br><span class="line">   x, y, w, h = cv2.boundingRect(np.array(cnt[maxIndex]))</span><br><span class="line">   cv2.rectangle(img, (x, y), (x+w, y+h), (<span class="number">0</span>, <span class="number">255</span>, <span class="number">0</span>), <span class="number">2</span>)                              </span><br></pre></td></tr></table></figure>
+<p>使用<code>cv2.boundingRect</code>函数报错的解决方法——&gt;<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_44634406/article/details/119356742">python报错error: (-215:Assertion failed) npoints ＞= 0 &amp;&amp; (depth == CV_32F || depth == CV_32S) in function boundingRect</a></p>
+<h2><span id="运动控制">运动控制</span></h2>
+<p>运动控制分为四步：</p>
+<ol>
+<li>定义标准位置与大小</li>
+<li>方位判断</li>
+<li>速度控制</li>
+</ol>
+<h3><span id="定义标准位置与大小">定义标准位置与大小</span></h3>
+<p>把标准位置定义在相机中心，标准大小可以自行设置需要的像素点。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 定义标准位置</span></span><br><span class="line">height,width,layer = img.shape</span><br><span class="line">center_x = height/<span class="number">2</span></span><br><span class="line">center_y = width/<span class="number">2</span></span><br><span class="line"><span class="comment"># 定义标准距离下目标物体大小</span></span><br><span class="line"><span class="comment"># 960*720 = 691200</span></span><br><span class="line">size = <span class="number">6000</span></span><br><span class="line">area = w*h</span><br><span class="line">robot_x = x+w/<span class="number">2</span></span><br><span class="line">robot_y = y+h/<span class="number">2</span></span><br></pre></td></tr></table></figure>
+<h3><span id="方位判断">方位判断</span></h3>
+<p>在无人机的飞行过程中，通过不断比较目标位置与标准位置，来判断无人机的方位。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 定义方向变量</span></span><br><span class="line">left_sign = <span class="number">0</span></span><br><span class="line">right_sign = <span class="number">0</span></span><br><span class="line">forward_sign = <span class="number">0</span></span><br><span class="line">up_sign = <span class="number">0</span></span><br><span class="line">down_sign = <span class="number">0</span></span><br><span class="line"><span class="comment"># 判断前后速度</span></span><br><span class="line"><span class="keyword">if</span> area &lt; size <span class="keyword">and</span> area &gt; size-<span class="number">2000</span>:</span><br><span class="line">    forward_sign = <span class="number">1</span></span><br><span class="line"><span class="keyword">elif</span> area &gt; size-<span class="number">4000</span> <span class="keyword">and</span> area &lt;= size-<span class="number">2000</span>:</span><br><span class="line">    forward_sign = <span class="number">2</span></span><br><span class="line"><span class="keyword">elif</span> area &lt;= size-<span class="number">4000</span> <span class="keyword">and</span> size &gt; <span class="number">0</span>:</span><br><span class="line">    forward_sign = <span class="number">3</span></span><br><span class="line"><span class="keyword">if</span> area &gt;= size <span class="keyword">and</span> area &lt; size+<span class="number">100000</span>:</span><br><span class="line">    forward_sign = -<span class="number">1</span></span><br><span class="line"><span class="keyword">elif</span> area &gt;= size+<span class="number">100000</span> <span class="keyword">and</span> area &lt; size+<span class="number">300000</span>:</span><br><span class="line">    forward_sign = -<span class="number">2</span></span><br><span class="line"><span class="keyword">elif</span> area &gt; size+<span class="number">300000</span>:</span><br><span class="line">    forward_sign = -<span class="number">3</span></span><br><span class="line"><span class="comment"># 判断左侧横向速度</span></span><br><span class="line"><span class="keyword">if</span> robot_x &lt; center_x <span class="keyword">and</span> robot_x &gt; center_x-<span class="number">120</span>:</span><br><span class="line">    left_sign = <span class="number">1</span></span><br><span class="line"><span class="keyword">elif</span> robot_x &lt;= center_x-<span class="number">120</span> <span class="keyword">and</span> robot_x &gt;= center_x-<span class="number">240</span>:</span><br><span class="line">    left_sign = <span class="number">2</span></span><br><span class="line"><span class="keyword">elif</span> robot_x &lt; center_x-<span class="number">240</span>:</span><br><span class="line">    left_sign =<span class="number">3</span></span><br><span class="line"><span class="comment"># 判断右侧横向速度</span></span><br><span class="line"><span class="keyword">if</span> robot_x &gt; center_x <span class="keyword">and</span> robot_x &lt; center_x+<span class="number">120</span>:</span><br><span class="line">    right_sign = <span class="number">1</span></span><br><span class="line"><span class="keyword">elif</span> robot_x &gt;= center_x+<span class="number">120</span> <span class="keyword">and</span> robot_x &lt;= center_x+<span class="number">240</span>:</span><br><span class="line">    right_sign = <span class="number">2</span></span><br><span class="line"><span class="keyword">elif</span> robot_x &gt; center_x+<span class="number">240</span>:</span><br><span class="line">    right_sign =<span class="number">3</span></span><br></pre></td></tr></table></figure>
+<h3><span id="速度控制">速度控制</span></h3>
+<p>无人机遥控有四个杆量，横滚、俯仰、油门、偏航。这四个杆量表示飞机运动的四个自由度。<br>
+<img src="https://img-blog.csdnimg.cn/828a144c05124dc9885e7762669d2c1d.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDYzNDQwNg==,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"></p>
+<p>横滚，控制无人机左右移动；<br>
+俯仰，控制无人机前后移动；<br>
+油门，控制无人机高度；<br>
+偏航，控制无人机水平方向的角度；</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">           控制飞机遥控器的四个杆量</span></span><br><span class="line"><span class="string">           参数:	</span></span><br><span class="line"><span class="string">           a – float:[-100, 100] 横滚</span></span><br><span class="line"><span class="string">           b – float:[-100, 100] 俯仰</span></span><br><span class="line"><span class="string">           c – float:[-100, 100] 油门</span></span><br><span class="line"><span class="string">           d – float:[-100, 100] 偏航</span></span><br><span class="line"><span class="string">           &quot;&quot;&quot;</span></span><br><span class="line">           <span class="comment"># 设定杆量参数集</span></span><br><span class="line">           a_level = [<span class="number">25</span>,<span class="number">35</span>,<span class="number">45</span>]</span><br><span class="line">           b_level_forward = [<span class="number">15</span>,<span class="number">25</span>,<span class="number">40</span>]</span><br><span class="line">           b_level_backward = [-<span class="number">30</span>,-<span class="number">45</span>,-<span class="number">60</span>]</span><br><span class="line">           <span class="comment"># # 控制前后进</span></span><br><span class="line">           <span class="keyword">if</span> forward == <span class="number">1</span>:</span><br><span class="line">               tl_flight.rc(b=b_level_forward[<span class="number">0</span>])</span><br><span class="line">           <span class="keyword">elif</span> forward == <span class="number">2</span>:</span><br><span class="line">               tl_flight.rc(b=b_level_forward[<span class="number">1</span>])</span><br><span class="line">           <span class="keyword">elif</span> forward == <span class="number">3</span>:</span><br><span class="line">               tl_flight.rc(b=b_level_forward[<span class="number">2</span>])</span><br><span class="line">           <span class="keyword">elif</span> forward == <span class="number">0</span>:</span><br><span class="line">               tl_flight.rc(b=<span class="number">0</span>)</span><br><span class="line">           <span class="keyword">elif</span> forward == -<span class="number">1</span>:</span><br><span class="line">               tl_flight.rc(b=b_level_backward[<span class="number">0</span>])</span><br><span class="line">           <span class="keyword">elif</span> forward == -<span class="number">2</span>:</span><br><span class="line">               tl_flight.rc(b=b_level_backward[<span class="number">1</span>])</span><br><span class="line">           <span class="keyword">elif</span> forward == -<span class="number">3</span>:</span><br><span class="line">               tl_flight.rc(b=b_level_backward[<span class="number">2</span>])</span><br><span class="line">           <span class="comment"># 控制左右向</span></span><br><span class="line">           <span class="keyword">if</span> left == <span class="number">1</span>:</span><br><span class="line">               tl_flight.rc(a=-a_level[<span class="number">0</span>])</span><br><span class="line">           <span class="keyword">elif</span> left == <span class="number">2</span>:</span><br><span class="line">               tl_flight.rc(a=-a_level[<span class="number">1</span>])</span><br><span class="line">           <span class="keyword">elif</span> left == <span class="number">3</span>:</span><br><span class="line">               tl_flight.rc(a=-a_level[<span class="number">2</span>])</span><br><span class="line">           <span class="keyword">elif</span> right == <span class="number">1</span>:</span><br><span class="line">               tl_flight.rc(a=a_level[<span class="number">0</span>])</span><br><span class="line">           <span class="keyword">elif</span> right == <span class="number">2</span>:</span><br><span class="line">               tl_flight.rc(a=a_level[<span class="number">1</span>])</span><br><span class="line">           <span class="keyword">elif</span> right == <span class="number">3</span>:</span><br><span class="line">               tl_flight.rc(a=a_level[<span class="number">2</span>])</span><br><span class="line">           <span class="keyword">elif</span> right == <span class="number">0</span> <span class="keyword">and</span> left == <span class="number">0</span>:</span><br><span class="line">               tl_flight.rc(a=<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+<h1><span id="代码汇总">代码汇总</span></h1>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">from</span> robomaster <span class="keyword">import</span> robot,battery</span><br><span class="line"><span class="keyword">from</span> robomaster <span class="keyword">import</span> camera</span><br><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">sys.path.append(<span class="string">r&#x27;P:\Python\cv2&#x27;</span>) <span class="comment"># 这里是我的路径，你的路径会不一样</span></span><br><span class="line"><span class="keyword">from</span> string_recognise_self <span class="keyword">import</span> cv_show,FillHole,cv_drawContours,cv_center,cv_erodedAndDilated</span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;碎片填充&quot;&quot;&quot;</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">FillHole</span>(<span class="params">img,SavePath=<span class="string">&#x27;img_fillhole.jpg&#x27;</span></span>):</span></span><br><span class="line">    img_in = img</span><br><span class="line">    <span class="comment"># 复制 im_in 图像</span></span><br><span class="line">    img_floodfill = img_in.copy()    </span><br><span class="line">    <span class="comment"># Mask 用于 floodFill，官方要求长宽+2</span></span><br><span class="line">    h, w = img_in.shape[:<span class="number">2</span>]</span><br><span class="line">    mask = np.zeros((h+<span class="number">2</span>, w+<span class="number">2</span>), np.uint8)    </span><br><span class="line">    <span class="comment"># floodFill函数中的seedPoint必须是背景</span></span><br><span class="line">    isbreak = <span class="literal">False</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(img_floodfill.shape[<span class="number">0</span>]):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(img_floodfill.shape[<span class="number">1</span>]):</span><br><span class="line">            <span class="keyword">if</span>(img_floodfill[i][j]==<span class="number">0</span>):</span><br><span class="line">                seedPoint=(i,j)</span><br><span class="line">                isbreak = <span class="literal">True</span></span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">if</span>(isbreak):</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    <span class="comment"># 得到im_floodfill</span></span><br><span class="line">    cv2.floodFill(img_floodfill, mask, seedPoint, <span class="number">255</span>);</span><br><span class="line">    <span class="comment"># 得到im_floodfill的逆im_floodfill_inv</span></span><br><span class="line">    img_floodfill_inv = cv2.bitwise_not(img_floodfill)</span><br><span class="line">    img_out = img_in | img_floodfill_inv</span><br><span class="line">    cv2.imwrite(SavePath, img_out)</span><br><span class="line">    <span class="keyword">return</span> img_out</span><br><span class="line">    </span><br><span class="line"><span class="string">&quot;&quot;&quot;腐蚀与膨胀&quot;&quot;&quot;</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">cv_erodedAndDilated</span>(<span class="params">img</span>):</span></span><br><span class="line">    <span class="comment"># 定义结构化元素</span></span><br><span class="line">    size = <span class="number">20</span></span><br><span class="line">    kernel = cv2.getStructuringElement(cv2.MORPH_RECT,(size,size))</span><br><span class="line">    <span class="comment"># 腐蚀图像</span></span><br><span class="line">    eroded = cv2.erode(img, kernel)</span><br><span class="line">    <span class="comment"># 膨胀图像</span></span><br><span class="line">    img_dilated = cv2.dilate(eroded, kernel)</span><br><span class="line">    <span class="keyword">return</span> img_dilated</span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;小球位置识别&quot;&quot;&quot;</span>   </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">cv_center</span>(<span class="params">img</span>):</span></span><br><span class="line">    <span class="comment"># 定义结构化元素</span></span><br><span class="line">    kernel = cv2.getStructuringElement(cv2.MORPH_RECT,(<span class="number">5</span>,<span class="number">5</span>))</span><br><span class="line">    <span class="comment"># 定义标准位置</span></span><br><span class="line">    height,width,layer = img.shape</span><br><span class="line">    center_x = height/<span class="number">2</span></span><br><span class="line">    center_y = width/<span class="number">2</span></span><br><span class="line">    <span class="comment"># 设定颜色HSV数值范围</span></span><br><span class="line">    sensity = <span class="number">10</span></span><br><span class="line">    green_lower = np.array([<span class="number">50</span>-sensity,<span class="number">43</span>,<span class="number">46</span>])</span><br><span class="line">    green_upper = np.array([<span class="number">60</span>+sensity,<span class="number">255</span>,<span class="number">255</span>])</span><br><span class="line">    <span class="comment"># 将图像转成HSV颜色空间</span></span><br><span class="line">    hsv_frame = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)</span><br><span class="line">    <span class="comment"># 基于颜色的物体提取</span></span><br><span class="line">    mask = cv2.inRange(hsv_frame, green_lower,green_upper)</span><br><span class="line">    mask2 = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)</span><br><span class="line">    mask3 = cv2.morphologyEx(mask2, cv2.MORPH_CLOSE, kernel)</span><br><span class="line">    <span class="comment"># 缝隙填充</span></span><br><span class="line">    mask4 = FillHole(mask3)</span><br><span class="line">    mask5 = cv_erodedAndDilated(mask4)</span><br><span class="line">    <span class="comment"># 轮廓检测</span></span><br><span class="line">    cnt,heridency = cv2.findContours(mask5,</span><br><span class="line">                                     cv2.RETR_EXTERNAL,</span><br><span class="line">                                     cv2.CHAIN_APPROX_SIMPLE)</span><br><span class="line">    <span class="keyword">if</span> cnt == []:</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">    <span class="comment"># 找出面积最大区域</span></span><br><span class="line">    maxArea = <span class="number">0</span></span><br><span class="line">    maxIndex = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> i, j <span class="keyword">in</span> <span class="built_in">enumerate</span>(cnt):</span><br><span class="line">        area = cv2.contourArea(j)</span><br><span class="line">        <span class="keyword">if</span> area &gt; maxArea:</span><br><span class="line">            maxArea = area</span><br><span class="line">            maxIndex = i</span><br><span class="line">    cv2.drawContours(img,cnt,maxIndex,(<span class="number">255</span>,<span class="number">0</span>,<span class="number">255</span>),<span class="number">10</span>)</span><br><span class="line">    <span class="comment"># x，y是矩阵左上点的坐标，w，h是矩阵的宽和高</span></span><br><span class="line">    x, y, w, h = cv2.boundingRect(np.array(cnt[maxIndex]))</span><br><span class="line">    cv2.rectangle(img, (x, y), (x+w, y+h), (<span class="number">0</span>, <span class="number">255</span>, <span class="number">0</span>), <span class="number">2</span>)</span><br><span class="line">    <span class="comment"># 定义标准距离下目标物体大小</span></span><br><span class="line">    <span class="comment"># 960*720 = 691200</span></span><br><span class="line">    size = <span class="number">6000</span></span><br><span class="line">    area = w*h</span><br><span class="line">    robot_x = x+w/<span class="number">2</span></span><br><span class="line">    robot_y = y+h/<span class="number">2</span></span><br><span class="line">    <span class="comment"># 定义方向变量</span></span><br><span class="line">    left_sign = <span class="number">0</span></span><br><span class="line">    right_sign = <span class="number">0</span></span><br><span class="line">    forward_sign = <span class="number">0</span></span><br><span class="line">    up_sign = <span class="number">0</span></span><br><span class="line">    down_sign = <span class="number">0</span></span><br><span class="line">    <span class="comment"># 判断前后速度</span></span><br><span class="line">    <span class="keyword">if</span> area &lt; size <span class="keyword">and</span> area &gt; size-<span class="number">2000</span>:</span><br><span class="line">        forward_sign = <span class="number">1</span></span><br><span class="line">    <span class="keyword">elif</span> area &gt; size-<span class="number">4000</span> <span class="keyword">and</span> area &lt;= size-<span class="number">2000</span>:</span><br><span class="line">        forward_sign = <span class="number">2</span></span><br><span class="line">    <span class="keyword">elif</span> area &lt;= size-<span class="number">4000</span> <span class="keyword">and</span> size &gt; <span class="number">0</span>:</span><br><span class="line">        forward_sign = <span class="number">3</span></span><br><span class="line">    <span class="keyword">if</span> area &gt;= size <span class="keyword">and</span> area &lt; size+<span class="number">100000</span>:</span><br><span class="line">        forward_sign = -<span class="number">1</span></span><br><span class="line">    <span class="keyword">elif</span> area &gt;= size+<span class="number">100000</span> <span class="keyword">and</span> area &lt; size+<span class="number">300000</span>:</span><br><span class="line">        forward_sign = -<span class="number">2</span></span><br><span class="line">    <span class="keyword">elif</span> area &gt; size+<span class="number">300000</span>:</span><br><span class="line">        forward_sign = -<span class="number">3</span></span><br><span class="line">    <span class="comment"># 判断左侧横向速度</span></span><br><span class="line">    <span class="keyword">if</span> robot_x &lt; center_x <span class="keyword">and</span> robot_x &gt; center_x-<span class="number">120</span>:</span><br><span class="line">        left_sign = <span class="number">1</span></span><br><span class="line">    <span class="keyword">elif</span> robot_x &lt;= center_x-<span class="number">120</span> <span class="keyword">and</span> robot_x &gt;= center_x-<span class="number">240</span>:</span><br><span class="line">        left_sign = <span class="number">2</span></span><br><span class="line">    <span class="keyword">elif</span> robot_x &lt; center_x-<span class="number">240</span>:</span><br><span class="line">        left_sign =<span class="number">3</span></span><br><span class="line">    <span class="comment"># 判断右侧横向速度</span></span><br><span class="line">    <span class="keyword">if</span> robot_x &gt; center_x <span class="keyword">and</span> robot_x &lt; center_x+<span class="number">120</span>:</span><br><span class="line">        right_sign = <span class="number">1</span></span><br><span class="line">    <span class="keyword">elif</span> robot_x &gt;= center_x+<span class="number">120</span> <span class="keyword">and</span> robot_x &lt;= center_x+<span class="number">240</span>:</span><br><span class="line">        right_sign = <span class="number">2</span></span><br><span class="line">    <span class="keyword">elif</span> robot_x &gt; center_x+<span class="number">240</span>:</span><br><span class="line">        right_sign =<span class="number">3</span></span><br><span class="line">    <span class="comment"># 判断飞机飞行高度</span></span><br><span class="line">    <span class="comment"># 没有必要，因为小球的高度是固定</span></span><br><span class="line">    <span class="comment"># 如果想要进行高度判断，这其实是一个难点。因为目标物在前后和上下两个维度上的移动</span></span><br><span class="line">    <span class="comment"># 都会导致y坐标的变化。y坐标变化的因素有两个，需要把这两个因素综合考虑。</span></span><br><span class="line">    <span class="keyword">return</span> forward_sign,left_sign,right_sign</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    tl_drone = robot.Drone()</span><br><span class="line">    <span class="comment"># 指定连接方式为AP 直连模式</span></span><br><span class="line">    tl_drone.initialize()</span><br><span class="line">    tl_flight = tl_drone.flight</span><br><span class="line">    tl_camera = tl_drone.camera </span><br><span class="line">    tl_battery = tl_drone.battery</span><br><span class="line">    <span class="comment"># 获取飞机电量信息</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;battery=\t&#x27;</span>+<span class="built_in">str</span>(tl_battery.get_battery())+<span class="string">&#x27;%&#x27;</span>)</span><br><span class="line">    cnt = []</span><br><span class="line">    <span class="comment"># 获取飞机机身温度</span></span><br><span class="line">    <span class="built_in">print</span>(tl_drone.get_temp())</span><br><span class="line">    <span class="comment"># 控制飞机起飞</span></span><br><span class="line">    tl_flight.takeoff().wait_for_completed()</span><br><span class="line">    <span class="comment"># 控制飞机飞行，单位cm</span></span><br><span class="line">    <span class="comment"># 设置飞机帧率</span></span><br><span class="line">    tl_camera.set_fps(fps=<span class="string">&#x27;high&#x27;</span>)</span><br><span class="line">    <span class="comment"># 设置飞机码率</span></span><br><span class="line">    tl_camera.set_bitrate(bitrate=<span class="number">6</span>)</span><br><span class="line">    <span class="comment"># 设置飞机分辨率</span></span><br><span class="line">    tl_camera.set_resolution(resolution=<span class="string">&#x27;high&#x27;</span>)</span><br><span class="line">    <span class="comment"># 获取视频流</span></span><br><span class="line">    tl_camera.start_video_stream(display=<span class="literal">False</span>)</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">            img = tl_camera.read_cv2_image(strategy=<span class="string">&#x27;newest&#x27;</span>)</span><br><span class="line">            forward,left,right = cv_center(img)</span><br><span class="line">            <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">            控制飞机遥控器的四个杆量</span></span><br><span class="line"><span class="string">            参数:	</span></span><br><span class="line"><span class="string">            a – float:[-100, 100] 横滚</span></span><br><span class="line"><span class="string">            b – float:[-100, 100] 俯仰</span></span><br><span class="line"><span class="string">            c – float:[-100, 100] 油门</span></span><br><span class="line"><span class="string">            d – float:[-100, 100] 偏航</span></span><br><span class="line"><span class="string">            &quot;&quot;&quot;</span></span><br><span class="line">            <span class="comment"># 设定杆量参数集</span></span><br><span class="line">            a_level = [<span class="number">25</span>,<span class="number">35</span>,<span class="number">45</span>]</span><br><span class="line">            b_level_forward = [<span class="number">15</span>,<span class="number">25</span>,<span class="number">40</span>]</span><br><span class="line">            b_level_backward = [-<span class="number">30</span>,-<span class="number">45</span>,-<span class="number">60</span>]</span><br><span class="line">            <span class="comment"># # 控制前后进</span></span><br><span class="line">            <span class="keyword">if</span> forward == <span class="number">1</span>:</span><br><span class="line">                tl_flight.rc(b=b_level_forward[<span class="number">0</span>])</span><br><span class="line">            <span class="keyword">elif</span> forward == <span class="number">2</span>:</span><br><span class="line">                tl_flight.rc(b=b_level_forward[<span class="number">1</span>])</span><br><span class="line">            <span class="keyword">elif</span> forward == <span class="number">3</span>:</span><br><span class="line">                tl_flight.rc(b=b_level_forward[<span class="number">2</span>])</span><br><span class="line">            <span class="keyword">elif</span> forward == <span class="number">0</span>:</span><br><span class="line">                tl_flight.rc(b=<span class="number">0</span>)</span><br><span class="line">            <span class="keyword">elif</span> forward == -<span class="number">1</span>:</span><br><span class="line">                tl_flight.rc(b=b_level_backward[<span class="number">0</span>])</span><br><span class="line">            <span class="keyword">elif</span> forward == -<span class="number">2</span>:</span><br><span class="line">                tl_flight.rc(b=b_level_backward[<span class="number">1</span>])</span><br><span class="line">            <span class="keyword">elif</span> forward == -<span class="number">3</span>:</span><br><span class="line">                tl_flight.rc(b=b_level_backward[<span class="number">2</span>])</span><br><span class="line">            <span class="comment"># 控制左右向</span></span><br><span class="line">            <span class="keyword">if</span> left == <span class="number">1</span>:</span><br><span class="line">                tl_flight.rc(a=-a_level[<span class="number">0</span>])</span><br><span class="line">            <span class="keyword">elif</span> left == <span class="number">2</span>:</span><br><span class="line">                tl_flight.rc(a=-a_level[<span class="number">1</span>])</span><br><span class="line">            <span class="keyword">elif</span> left == <span class="number">3</span>:</span><br><span class="line">                tl_flight.rc(a=-a_level[<span class="number">2</span>])</span><br><span class="line">            <span class="keyword">elif</span> right == <span class="number">1</span>:</span><br><span class="line">                tl_flight.rc(a=a_level[<span class="number">0</span>])</span><br><span class="line">            <span class="keyword">elif</span> right == <span class="number">2</span>:</span><br><span class="line">                tl_flight.rc(a=a_level[<span class="number">1</span>])</span><br><span class="line">            <span class="keyword">elif</span> right == <span class="number">3</span>:</span><br><span class="line">                tl_flight.rc(a=a_level[<span class="number">2</span>])</span><br><span class="line">            <span class="keyword">elif</span> right == <span class="number">0</span> <span class="keyword">and</span> left == <span class="number">0</span>:</span><br><span class="line">                tl_flight.rc(a=<span class="number">0</span>)</span><br><span class="line">            time.sleep(<span class="number">0.08</span>)</span><br><span class="line">            cv2.namedWindow(<span class="string">&#x27;Drone&#x27;</span>, <span class="number">0</span>)</span><br><span class="line">            cv2.imshow(<span class="string">&quot;Drone&quot;</span>, img)</span><br><span class="line">            cv2.waitKey(<span class="number">10</span>)</span><br><span class="line">            tl_flight.rc(a=<span class="number">0</span>,b=<span class="number">0</span>,c=<span class="number">0</span>,d=<span class="number">0</span>)</span><br><span class="line">    <span class="keyword">except</span> KeyboardInterrupt:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    cv2.destroyAllWindows()</span><br><span class="line">    tl_camera.stop_video_stream()         </span><br><span class="line">    <span class="comment"># 控制飞机降落</span></span><br><span class="line">    tl_flight.land().wait_for_completed()</span><br><span class="line">    <span class="comment"># 关闭无人机对象</span></span><br><span class="line">    tl_drone.close()</span><br></pre></td></tr></table></figure>
+<h1><span id="贴一张照片">贴一张照片</span></h1>
+<p>现场跟踪小球的照片<br>
+<img src="https://raw.githubusercontent.com/patrlean/images/main/IMG_20211009_222825.jpg" alt="现场照片"></p>
+<h1><span id="总结">总结</span></h1>
+<ul>
+<li>算法简易，仅仅靠颜色来区分目标。但是现场光线对颜色的影响很大，算法稳定性低。</li>
+<li>于队友合作失败，一个人完成所有代码编写工作。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/drone/" rel="tag"># drone</a>
+              <a href="/tags/image-recognition/" rel="tag"># image recognition</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/01/28/MySQL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="prev" title="MySQL学习笔记">
+      <i class="fa fa-chevron-left"></i> MySQL学习笔记
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/01/30/hello-world/" rel="next" title="初次见面哇">
+      初次见面哇 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">无人机巡线</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text">RGB-&gt;HSV</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.2.</span> <span class="nav-text">二值化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.3.</span> <span class="nav-text">碎片填补</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.4.</span> <span class="nav-text">轮廓提取</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.5.</span> <span class="nav-text">跟随控制线</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">跟踪小球</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.1.</span> <span class="nav-text">目标识别</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.1.1.</span> <span class="nav-text">图像预处理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.2.</span> <span class="nav-text">运动控制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.2.1.</span> <span class="nav-text">定义标准位置与大小</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.2.2.</span> <span class="nav-text">方位判断</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.2.3.</span> <span class="nav-text">速度控制</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">代码汇总</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">贴一张照片</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Tianyou"
+      src="https://raw.githubusercontent.com/patrlean/images/main/IMG_2343.jpg">
+  <p class="site-author-name" itemprop="name">Tianyou</p>
+  <div class="site-description" itemprop="description">三得利爱喝乌龙茶</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/patrlean" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;patrlean" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom github"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/349361858" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;349361858" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom bilibili"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:patriiicabis@gmail.com" title="E-Mail → mailto:patriiicabis@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom Email"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_44634406" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_44634406" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom CSDN"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://music.163.com/#/user/home?id=588410069" title="NetEase Cloud Music → https:&#x2F;&#x2F;music.163.com&#x2F;#&#x2F;user&#x2F;home?id&#x3D;588410069" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom NetEaseCloudMusic"></i></a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tianyou</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">68k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">1:02</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力激情猛烈爆炸驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : '7JF3q74Xi62JMViy5Bhc3uqJ-MdYXbMMI',
+      appKey     : 'c9puHAmapHdRf9e83usdLViq',
+      placeholder: "hello!",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : 'https://7jf3q74x.api.lncldglobal.com'
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
