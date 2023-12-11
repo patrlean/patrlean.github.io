@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="manifest" href="/images/manifest.json">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"patrlean.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="&#x2F;* Style to make images display in a row *&#x2F;     .image-container {       display: flex;     }      &#x2F;* Optional: Add some spacing between images *&#x2F;     .image-container img {       margin-right: 1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="课程设计|用于机场探鸟的相控阵雷达">
+<meta property="og:url" content="https://patrlean.github.io/2022/12/10/phase-control-radar-for-airport-brds-detection/index.html">
+<meta property="og:site_name" content="Tianyou Zhao 的个人博客">
+<meta property="og:description" content="&#x2F;* Style to make images display in a row *&#x2F;     .image-container {       display: flex;     }      &#x2F;* Optional: Add some spacing between images *&#x2F;     .image-container img {       margin-right: 1">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/2_2_1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/2-2-2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/2-2-3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/2-2-4.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/2-2-5.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/2-3-1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/2-3-2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/2-4-1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/3-1-1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/3-2-1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/3-2-2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/3-3-2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/3-4-1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/3-5-1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/3-5-2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/3-6-1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/3-7-1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/3-8-1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/4-1-1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/4-1-4.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/4-1-5.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/4-1-6.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/4-1-7.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/4-1-8.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/4-1-9.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/4-1-10.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/4-2-1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/4-2-2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/4-3-1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/4-3-2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/4-3-3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/4-4-1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/patrlean/images/main/4-4-2.png">
+<meta property="article:published_time" content="2022-12-10T15:44:16.000Z">
+<meta property="article:modified_time" content="2023-12-11T11:00:29.104Z">
+<meta property="article:author" content="Tianyou">
+<meta property="article:tag" content="radar">
+<meta property="article:tag" content="课程设计">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/patrlean/images/main/2_2_1.png">
+
+<link rel="canonical" href="https://patrlean.github.io/2022/12/10/phase-control-radar-for-airport-brds-detection/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>课程设计|用于机场探鸟的相控阵雷达 | Tianyou Zhao 的个人博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Tianyou Zhao 的个人博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">5</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">16</span></a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-fw fa-link"></i>友链</a>
+
+  </li>
+        <li class="menu-item menu-item-oracle">
+
+    <a href="/oracle/" rel="section"><i class="fa fa-fw fa-key"></i>黑盒子</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://patrlean.github.io/2022/12/10/phase-control-radar-for-airport-brds-detection/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://raw.githubusercontent.com/patrlean/images/main/avatar_selfie_new.jpg">
+      <meta itemprop="name" content="Tianyou">
+      <meta itemprop="description" content="三得利爱喝乌龙茶">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tianyou Zhao 的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          课程设计|用于机场探鸟的相控阵雷达
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-12-10 23:44:16" itemprop="dateCreated datePublished" datetime="2022-12-10T23:44:16+08:00">2022-12-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-12-11 19:00:29" itemprop="dateModified" datetime="2023-12-11T19:00:29+08:00">2023-12-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AF%BE%E7%A8%8B%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">课程设计</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/12/10/phase-control-radar-for-airport-brds-detection/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/12/10/phase-control-radar-for-airport-brds-detection/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>11k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>10 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <style>
+    /* Style to make images display in a row */
+    .image-container {
+      display: flex;
+    }
+
+    /* Optional: Add some spacing between images */
+    .image-container img {
+      margin-right: 10px;
+      max-width: 50%; /* Set maximum width to prevent image overflow */
+      height: auto; /* Maintain aspect ratio */
+    }
+</style>
+<blockquote class="blockquote-center">
+<p text-align="center">
+从战术指标出发，一步一步设计满足指标的各种雷达参数，硬件选择
+</p>
+</blockquote>
+<span id="more"></span>
+<h1><span id="写在前面">写在前面</span></h1>
+<p>本文是雷达原理课程的课程设计。需要我们根据实际场景的需求出发，如机场，车辆，卫星等等，设定战术指标，即满足哪些指标能够满足场景需求。然后根据战术指标和实际参数确定雷达参数，最后完成硬件选择和系统仿真。</p>
+<h1><span id="执行摘要">执行摘要</span></h1>
+<p>本文设计了一个相控阵雷达系统，用于机场探鸟。在确定了战术指标之后，我们选择了U波段波形和线性排布正方形天线。通过设立距离分辨率、方位分辨率和最大不模糊距离，距离盲区等等诸多技术指标。以及通过资料搜索确定鸟类rcs、环境热噪声等等外部参数。确定雷达参数，如发射功率、天线个数等等。结合具体参数对设计的雷达系统进行仿真分析，设计相控阵雷达鸟类探测系统。该系统可以满足机场探鸟的需求，帮助机场管理人员更好地管理和保护探鸟区域。</p>
+<p>关键词：机场探鸟雷达，相控阵雷达，U波段</p>
+<h1><span id="1简介以及背景">1.简介以及背景</span></h1>
+<p>机场探鸟雷达是一类针对低小慢目标设计的探测雷达。</p>
+<p>简单来说，低小慢目标探测雷达是一种专门用于探测低速、低高度的飞行物的雷达。这种雷达通常用于探测地面目标，如汽车、行人、动物等。</p>
+<p>低小慢目标探测雷达通常使用低频信号，因为低频信号能够更好地穿透水雾和烟雾等干扰物，从而提高探测效果。另外，低小慢目标探测雷达也具有较高的探测精度和较低的功耗，从而可以更好地应对长时间的探测任务。</p>
+<p>低小慢目标探测雷达的应用非常广泛，其主要用途包括航空和交通管理、安全监控、国土防护等领域。例如，低小慢目标探测雷达可以用于监测机场周边的飞行物[1]，以确保航空安全；也可以用于监控城市道路的交通情况，以便于控制交通流量；还可以用于监控国家边境的安全情况，以保障国家安全。</p>
+<p>其中很重要的一类低小慢雷达用于检测机场周边飞行物，如鸟类[2]，无人机等等。在机场周边检测飞行物的雷达称为机场跑道监控雷达，是专门用于监测机场周边的飞行物的雷达系统。机场跑道监控雷达通常用于检测机场周边的飞机、滑行车、行人等目标，以确保机场航空安全。</p>
+<p>机场跑道监控雷达通常采用S频段或X频段信号，以便在水雾和烟雾等干扰物存在的情况下提高探测效果。另外，机场跑道监控雷达也具有较高的探测精度和较低的功耗，从而可以更好地应对长时间的探测任务。</p>
+<p>相控阵技术是一种在雷达系统中使用多个发射和接收天线实现高分辨率成像的技术。在机场跑道监视雷达中，相控阵技术可以提高雷达的探测精度，从而更好地检测机场周边的飞行物。</p>
+<p>采用相控阵技术的机场跑道监视雷达，通常会使用一组平行的、相对位置固定的发射和接收天线。这些天线之间的相位差能够提高雷达的分辨率，从而可以更准确地检测机场周边的飞行物。</p>
+<p>相控阵技术在机场跑道监视雷达中的应用，可以提高雷达的探测效果，从而更好地保障机场航空安全。同时，相控阵技术也能够提高雷达系统的可靠性和可用性，从而为机场跑道监视提供更高效的技术支持。</p>
+<p>近年来随着科技水平日益发达，人民经济水平逐步提升，民用市场涌现出大批小型无人机。其中以大疆为代表的无人机广泛应用于景色拍摄、夜空表演、安保巡查和会场直播等领域。无人机的广泛存在不仅威胁到个人隐私，同时也给低空监管带来严峻的挑战。无人机在城市中肆无忌惮的入侵各个重要场馆，对其进行拍摄甚至实时监控。更加危险的是无人机被反社会人群购买并加以改造后，投放危险易爆物品到监狱和电厂等地方，极大的威胁社会公共安全。此类无人机“黑飞”事件频频发生，因此对空域中的无人机进行检测、预警和反制尤为重要。针对无人机飞行高度低、机动性强和雷达散射截面积小等特征，研发四面二维相控阵雷达对其进行探测和跟踪。飞鸟飞行特点和小型无人机飞行特点相似，都是低可观测性目标。除了无人机“黑飞”扰航之外，鸟击事件也是航班起降阶段的重要威胁。传统的机场鸟情观测依靠人工，但在目视困难的黎明、黄昏和夜晚，是鸟击事件的高发期。四面二维相控阵雷达不仅能够克服天气、距离和昼夜变化等不利因素，还具有波束捷变无惯性的特点，将其搭配合理的雷达信号处理流程，使得四面二维相控阵雷达在覆盖空域实现全天候不间断的目标检测和跟踪，保证航路远离鸟击和无人机“黑飞”事件的干扰。</p>
+<p>二维相控阵雷达在低空低速探测等领域有广泛的应用前景，上世纪 70 年代后，雷达开始用于探测鸟类目标，特别是在天气条件恶劣的情况下，雷达更能体现其全天候不间断的优越性。探鸟雷达经过几十年的积累发展，多个国家都 已经研制出成熟的探鸟雷达。美国 DeTect 公司开发出 Merlin 鸟击探测雷达，Merlin 采用两个垂直波导缝隙阵列天线，该系统配备两部雷达分别为 X 波段垂直扫描雷达，和 S 波段水平扫描雷达，该系统的水平探测距离最大可达 12.9km，垂直探测距离最大可达 4.8km。Merlin 系统主要工作流程是通过水平与垂直波导缝隙阵列天线的机械扫描来获取机场空域中的雷达回波数据，根据目标检测及跟踪算法提取出鸟类目标的三维信息。加拿大 Sicom System 公 司开发出 Accipiter 鸟击探测雷达，该雷达包括控制系统、数据处理器、GPS 和电源，整个系统安装在拖车内部，从而使得 Accipiter 雷达具有较强机动性。在拖车顶部配备了峰值功率 50kw 的 X 波段抛物面天线，天线俯仰角具有 30°可调范围，天线波束 4°使得雷达系统具有较高准确度。Accipiter 系统使用多假设跟踪算法和互相关多模型，可实现对单只鸟或鸟群的实时跟踪。巴西 Army Technology Center 的 Danilo Habermann 等针对无人机分类的问题，提出了基于回波信号点云特征的分类方法。该方法将回波离散的采样点的实部虚部当做采样点的二维坐标，绘制回波的二维点云图，对不同无人机回波的点云图用神经网络进行分类。</p>
+<p>本文的研究内容是基于 FPGA 的三面二维相控阵雷达处理系统设计与实现。该信号 处理系统利用 FPGA 芯片实现和差通道中频回波的信号处理，在进行数字下变频、脉冲 压缩、动目标检测、恒虚警等信号处理算法后将获得的目标信息通过网口上传给上位机。</p>
+<h1><span id="2研究目标雷达战术指标">2.研究目标|雷达战术指标</span></h1>
+<h2><span id="21-雷达工作参数">2.1、雷达工作参数</span></h2>
+<ul>
+<li><strong>工作频段</strong>：U波段</li>
+<li><strong>雷达体制：相控阵雷达</strong></li>
+<li><strong>探索数据率</strong>：$\geq 5.53Hz$</li>
+<li><strong>功耗</strong>：$800W$</li>
+<li><strong>造价</strong>：$100万RMB$</li>
+<li><strong>同时跟踪目标数量</strong>：$\geq 15k$</li>
+</ul>
+<h2><span id="22-距离测量能力">2.2、距离测量能力</span></h2>
+<ul>
+<li><strong>最大作用距离</strong>：$\geq 5Km$（小型鸟类）</li>
+</ul>
+<div style="font-size: 14px;text-align: center;"><img src="https://raw.githubusercontent.com/patrlean/images/main/2_2_1.png" width="80%/"></div>
+<p>取最大飞机跑道的长度（$4000m$），同时考虑飞机离地后与雷达本体造成的斜边高度，因此取 $5000m$ 合适。</p>
+<div class="image-container">
+  <img src="https://raw.githubusercontent.com/patrlean/images/main/2-2-2.png">
+  <img src="https://raw.githubusercontent.com/patrlean/images/main/2-2-3.png">
+</div>
+<p>另一方面，对雷达作用距离的要求主要决定于待观测目标的轨道分布高度以及它们的雷达散射面积。</p>
+<p>搜索到 <strong>普通鸟类的RCS</strong> 为：</p>
+<div style="font-size: 14px;text-align: center;"><img src="https://raw.githubusercontent.com/patrlean/images/main/2-2-4.png" width="80%/"></div>
+<p>普通雷达方程：</p>
+<div style="text-align: center;">
+$R^4_{max} = \frac{P_t G_t G_r \sigma \lambda^4}{(4\pi)^3 L K T_e \Delta F (S/N)}$
+</div>
+<ul>
+<li><strong>最小探测距离</strong>：$500m$</li>
+</ul>
+<p>飞机位于廊桥边时，可以认为处于安全区域，因此取常用廊桥的长度作为最小探测距离的依据。</p>
+<ul>
+<li><strong>距离测量精度：</strong> $\leq 1m$</li>
+</ul>
+<p>在全世界所有飞机撞鸟事故中，大约有45%的撞击点落在飞机发动机上，42%的撞击点落在机头挡风玻璃和座舱上。因此设定距离测量精度小于等于$1m$，保证有足够的时间用于飞机预警。</p>
+<ul>
+<li><strong>距离分辨能力：</strong> $\leq 0.3m$</li>
+</ul>
+<p>距离分辨能力用于区分不同的鸟群。但不必要将鸟群中的每只鸟分辨清楚，只要提出预警即可，因此距离分辨率要求并不高。</p>
+<div style="font-size: 14px;text-align: center;"><img src="https://raw.githubusercontent.com/patrlean/images/main/2-2-5.png" width="80%/"></div>
+<p>3、速度测量能力</p>
+<ul>
+<li><strong>速度测量范围</strong>：$0-22 m/s$</li>
+</ul>
+<p>查阅网页以及相关资料可以发现飞机机场中鸟类飞行速度大概率不会超过$22m/s$</p>
+<div style="font-size: 14px;text-align: center;"><img src="https://raw.githubusercontent.com/patrlean/images/main/2-3-1.png" width="80%/"></div>
+<div style="font-size: 14px;text-align: center;"><img src="https://raw.githubusercontent.com/patrlean/images/main/2-3-2.png" width="80%/"></div>
+<ul>
+<li><strong>速度测量精度</strong>：$1 m/s$</li>
+<li><strong>速度分辨率</strong>：$1m/s$</li>
+</ul>
+<h2><span id="24-角度分辨能力">2.4、角度分辨能力</span></h2>
+<ul>
+<li><strong>方位角度范围</strong>：$0-120°$（单部雷达）</li>
+</ul>
+<p>考虑将三个天线阵面呈正三角形排布，构成全方位的搜索角度。</p>
+<ul>
+<li><strong>俯仰角度范围</strong>： $-20°-20°$</li>
+</ul>
+<div style="font-size: 14px;text-align: center;"><img src="https://raw.githubusercontent.com/patrlean/images/main/2-4-1.png" width="80%/"></div>
+<ul>
+<li><strong>方位角度测量分辨率</strong>：$\leq 5°$</li>
+<li><strong>俯仰角度测量分辨率</strong>：$\leq 5°$</li>
+</ul>
+<h1><span id="3细节设计雷达技术参数及雷达指标论证">3细节设计|雷达技术参数及雷达指标论证</span></h1>
+<h2><span id="31雷达基本架构">3.1雷达基本架构</span></h2>
+<p>雷达架构我们选择无源二维平面相控阵雷达</p>
+<p>选择无源二维平面相控阵雷达主要有以下几个原因：</p>
+<p>1.无源二维平面相控阵雷达可以提高雷达的分辨率。通过调节无源二维平面相控阵的排列方式和天线相位差，可以提高雷达的分辨率，从而更准确地检测目标。</p>
+<p>2.无源二维平面相控阵雷达可以减少雷达的功耗。无源二维平面相控阵雷达不需要额外的放大器，因此可以减少雷达的功耗，从而更好地应对长时间的探测任务。</p>
+<p>3.无源二维平面相控阵雷达可以提高雷达的可靠性和可用性。</p>
+<div style="font-size: 14px;text-align: center;"><img src="https://raw.githubusercontent.com/patrlean/images/main/3-1-1.png" width="80%/"></div>
+<h2><span id="32雷达波形设计">3.2雷达波形设计</span></h2>
+<p>雷达波段选择波段（$40~60GHz$）。雷达通常会使用不同的波段来进行探测，波段的选择取决于雷达的应用场景和探测任务。常见的雷达波段包括S频段、X频段、C频段、L频段、K频段、Ku频段等。</p>
+<p>S频段雷达波段在$2-4 GHz$之间，通常用于对地面目标的探测。X频段雷达波段在$8-12 GHz$之间，通常用于对地面目标的探测。C频段雷达波段在$4-8 GHz$之间，通常用于对空气目标的探测。L频段雷达波段在$15-30 GHz$之间，通常用于对空气目标的探测。K频段雷达波段在$18-26.5 GHz$之间，通常用于对空气目标的探测。Ku频段雷达波段在$12-18 GHz$之间，通常用于对地面和空气目标的探测。</p>
+<p>雷达波段的选择需要考虑到雷达的应用场景和探测任务，以及波段的传播特性和抗干扰能力。不同波段的雷达具有不同的特点，可以根据实际情况选择合适的波段进行探测。例如，在机场跑道监视应用中，可以使用S频段或X频段雷达，因为这两个波段具有较高的探测精度和较低的功耗。</p>
+<p>这里我们经过考虑后选择U波段。主要有以下几个原因。</p>
+<p>1.U波段雷达可以更好地探测小目标。U波段雷达具有更高的分辨率，可以更好地探测小目标，从而提高探测效果。</p>
+<p>2.U波段雷达可以提高抗干扰能力。U波段雷达具有较低的传播损耗，可以更好地抵抗干扰，从而提高探测系统的可靠性。</p>
+<p>3.U波段雷达可以提高探测距离。U波段雷达具有较长的传播距离，可以更好地探测远距离目标，从而扩大探测范围。</p>
+<p>4.U波段雷达可以减少功耗。U波段雷达可以通过适当的调节来减少功耗，从而降低运行成本。在对小目标进行探测时，可以通过减小发射功率来降低功耗。</p>
+<p>U波段雷达适用于对小目标进行探测，因此我们选择U波段进行鸟类探测。</p>
+<div style="font-size: 14px;text-align: center;"><img src="https://raw.githubusercontent.com/patrlean/images/main/3-2-1.png" width="60%/"></div>
+<ul>
+<li><strong>单脉冲时宽：</strong> $\tau = 3.4\times 10^{-6}s$</li>
+<li><strong>脉冲发送间隔：</strong> $T_r = 6 \times 10^{-5}s$</li>
+<li><strong>LMF信号带宽：</strong> $B = 500MHz$</li>
+<li><strong>信号中心频率：</strong> $f_0 = 50GHz$</li>
+</ul>
+<div style="font-size: 14px;text-align: center;"><img src="https://raw.githubusercontent.com/patrlean/images/main/3-2-2.png" width="60%/"></div>
+<h2><span id="33雷达天线排布">3.3雷达天线排布</span></h2>
+<p>相控阵雷达天线的排布是指雷达天线在空间中的分布方式。雷达天线的排布方式会直接影响到相控阵雷达的增益和方向性，从而影响到雷达系统的探测精度和探测范围。常见的相控阵雷达天线排布方式有线性排布、环形排布和随机排布等。线性排布的相控阵雷达天线具有较高的增益和较窄的方向图，适合于精细的探测和导引应用。环形排布的相控阵雷达天线具有较高的增益和较宽的方向图，适合于广域的探测应用。随机排布的相控阵雷达天线具有较低的增益和较宽的方向图，适合于随机杂波的抑制应用。选择合适的相控阵雷达天线排布方式，可以有效提高雷达系统的性能。在实际应用中，通常根据雷达系统的需求和应用场合，选择不同的排布方式，并结合具体的设计参数，进行优化设计，以达到最优性能。</p>
+<p>综合考虑到雷达性能和雷达布置成本的因素，我们设计相控阵雷达天线参数如下。</p>
+<ul>
+<li><strong>方向角天线个数：</strong> $n_x = 20$</li>
+<li><strong>俯仰角天线个数：</strong> $n_y = 20$</li>
+<li><strong>方向角天线间距：</strong> $d_x = \frac{\lambda}{2} = 3\times 10^{-3}$</li>
+<li><strong>俯仰角天线间距：</strong> $d_y = \frac{\lambda}{2} = 3\times 10^{-3}$</li>
+</ul>
+<div style="font-size: 14px;text-align: center;"><img src="https://raw.githubusercontent.com/patrlean/images/main/3-3-2.png" width="50%/"></div>
+<p>天线排布采用基础的二维线阵排布方式，方位向和俯仰向上天线个数相同，各有20个天线，一共组成20×20，共400个天线阵列。</p>
+<h2><span id="34雷达天线方向图">3.4雷达天线方向图</span></h2>
+<p>天线方向图，又称为天线指向图或者天线辐射图，是描述天线接收或发射能量分布的图形。天线方向图反映了天线的方向性特征，即天线在不同方向上的接收或发射能量强度。天线方向图通常是一个二维图形，可以是极角和极径图、幅角和幅径图、增益和极角图等。天线方向图可以帮助我们了解天线的方向性特征，</p>
+<p>分析天线的接收或发射特性，并为天线的设计和优化提供参考。</p>
+<div style="font-size: 14px;text-align: center;"><img src="https://raw.githubusercontent.com/patrlean/images/main/3-4-1.png" width="60%/"></div>
+<p>根据我们设计的天线线阵可以得到如上图所示的天线方向图。图中天线方向图反映相控阵雷达天线在方位向以及俯仰向上的信号强度分布。</p>
+<h2><span id="35雷达指标论证">3.5雷达指标论证</span></h2>
+<p>我们主要从两方面对雷达指标进行论证。即波形设计和天线设计。</p>
+<p>原因主要是波形设计和天线设计是雷达系统性能评估的两个重要方面。波形设计决定了雷达系统的能量分布和信号特征，直接影响到雷达系统的探测性能和信息传输效率。</p>
+<div class="image-container">
+  <img src="https://raw.githubusercontent.com/patrlean/images/main/3-5-1.png">
+  <img src="https://raw.githubusercontent.com/patrlean/images/main/3-5-2.png">
+</div>
+<p>天线设计决定了雷达系统的增益和方向性，直接影响到雷达系统的探测精度和探测范围。因此，从波形设计和天线设计两方面进行雷达指标论证，可以全面评估雷达系统的性能，为雷达系统的设计和优化提供参考。</p>
+<h2><span id="36相控阵天线带宽限制">3.6相控阵天线带宽限制</span></h2>
+<p>相控阵天线是一种多频段天线，具有宽带和高增益的特点。但是，相控阵天线的带宽也有一定的限制。相控阵天线的带宽主要受阵元的数量和阵元的间隔影响。如果阵元数量较少，阵元间隔较大，相控阵天线的带宽就会受到限制。同时，相控阵天线带宽还受到天线结构、材料和工艺等因素的限制。因此，在设计相控阵天线时，必须考虑带宽限制，确定合适的阵元数量和阵元间隔，并合理选择天线结构、材料和工艺，以确保相控阵天线的带宽足够宽，能够满足雷达系统的需求。同时，也要注意，过宽的带宽会导致雷达系统的噪声增大，降低信噪比，影响雷达系统的性能。因此，在设计相控阵天线时，需要在带宽限制和信噪比之间取得平衡，确定合适的带宽范围，以保证雷达系统的性能。</p>
+<p>我们的设计中具体参数如下：</p>
+<ul>
+<li>带入参数$f_0=50GHz$，角度 $\Delta \theta_x=5°,\theta_x = 60°$</li>
+<li>$(∆f_max)/f_0 ≤(∆θ_x)/(2∙sin⁡(θ_x))$</li>
+<li>带入参数$f_0=50GHz$，角度 $\Delta \theta_y=5°,\theta_y = 20°$</li>
+<li>$(∆f_max)/f_0 ≤(∆θ_y)/(2∙sin⁡(θ_y))$</li>
+</ul>
+<p>将具体数据和公式代入Maple进行计算，计算结果得到如下结论。</p>
+<div style="font-size: 14px;text-align: center;"><img src="https://raw.githubusercontent.com/patrlean/images/main/3-6-1.png" width="70%/"></div>
+<h2><span id="37雷达功率设计">3.7雷达功率设计</span></h2>
+<p>雷达功率与雷达方程密切相关，雷达方程是衡量雷达探测性能的一种重要方式，用于分析雷达的探测距离和分辨率。雷达方程通常由两部分组成，分别是雷达脉冲发射功率和目标反射信号的损失等级。</p>
+<p>雷达功率与雷达方程有密切的关系，雷达功率越大，雷达方程的探测距离和分辨率就越高。例如，对于同一个目标，如果雷达功率提高一倍，则雷达方程的探测距离和分辨率也会提高一倍。但是，雷达功率的提高也会增加雷达的功耗和系统成本，需要在实际应用中进行权衡。</p>
+<p>通常情况下，雷达方程与雷达功率成正比例关系，即雷达功率越大，雷达方程的探测距离和分辨率也越高。但是，在一定范围内，雷达功率的提高对雷达方程的探测距离和分辨率的提高效果不是线性的，而是呈指数关系。例如，当雷达功率提高一倍时，雷达方程的探测距离和分辨率可能会提高两倍或更多。</p>
+<p>因此，雷达功率与雷达方程之间存在一定的线性关系，在一定范围内，雷达功率的提高可以提高雷达方程的探测距离和分辨率。但是，雷达功率的提高也会增加雷达的功耗和系统成本，需要在实际应用中进行权衡。</p>
+<ul>
+<li>*我们的设计中具体参数如下：</li>
+</ul>
+<ul>
+<li><strong>雷达发射平均功率：</strong> $P_{av}=800 W$</li>
+<li><strong>有效接受面积：</strong> $A_r=(n_x d_x )∙(n_y d_y )  cos⁡(θ_x )  cos⁡(θ_y )$</li>
+<li><strong>目标RCS</strong>：$σ=0.01 m^2$</li>
+<li><strong>搜索时间：</strong> $t_s=0.18 s$</li>
+<li><strong>雷达系统损耗：</strong> $L=6dB=3.981$</li>
+<li><strong>玻尔兹曼常数：</strong> $K=1.38∙10^{-23}$</li>
+<li><strong>环境热常数：</strong> $T_e=290K$</li>
+<li><strong>发射信号波长：</strong> $λ=c/f_0=(3∙10^8)/(50∙10^9 )=6∙10^{-3}$</li>
+</ul>
+<p>将具体数据和公式代入Maple进行计算，计算结果得到如下结论。</p>
+<div style="font-size: 14px;text-align: center;"><img src="https://raw.githubusercontent.com/patrlean/images/main/3-7-1.png" width="100%/"></div>
+<h2><span id="38距离-速度-角度技术指标论证">3.8距离、速度、角度技术指标论证</span></h2>
+<p>我们的设计中具体参数如下：</p>
+<ul>
+<li><strong>最大探测距离：</strong> $	d_{max}=5000 m$</li>
+<li><strong>最小探测距离：</strong> $d_{min}=500 m$</li>
+<li><strong>距离分辨率：</strong> $d_{res}=0.3 m$</li>
+<li><strong>速度测量范围</strong> $0-22.2m/s$</li>
+<li><strong>速度分辨率：</strong> $1m/s$
+<ul>
+<li><strong>方位角度范围：</strong> $0°≤ϕ_r≤120°$</li>
+<li><strong>俯仰角度范围：</strong> $-20°≤θ_r≤20°$</li>
+<li><strong>方位角度分辨率：</strong> $∆ϕ≤5°$</li>
+<li><strong>俯仰角度分辨率：</strong> $∆θ≤5°$</li>
+</ul>
+</li>
+</ul>
+<p>将具体数据和公式代入Maple进行计算，计算结果得到如下结论。</p>
+<div style="font-size: 14px;text-align: center;"><img src="https://raw.githubusercontent.com/patrlean/images/main/3-8-1.png" width="60%/"></div>
+<h1><span id="4信号处理仿真">4.信号处理仿真</span></h1>
+<h2><span id="41信号处理流程">4.1信号处理流程</span></h2>
+<p>信号处理流程如下图，信号首先经过带通采样，采样后通过数字下变频技术得到低频信号。得到的低频信号在经过脉冲压缩技术，MTI以及MTD后，使用恒虚警技术对目标进行检测，最后得到目标输出。通过网口以 UDP 包的形式上传。</p>
+<div style="font-size: 14px;text-align: center;"><img src="https://raw.githubusercontent.com/patrlean/images/main/4-1-1.png" width="100%/"></div>
+<h3><span id="411带通采样">4.1.1带通采样</span></h3>
+<p>对于低频信号，当采样率大于等于低频信号频率的两倍时，可以无失真的恢复出原始信号，即奈奎斯特采样定理。但是对于中频或者射频信号，仍然使用奈奎斯特采样定理计算，实现难度很大，因此通常使用带通采样定理恢复中频信号。</p>
+<h3><span id="412-正交解调">4.1.2 正交解调</span></h3>
+<p>通信领域常用调制解调的方式提高频谱的利用率。正交解调将带限信号中心频率搬移到零频，方便提取携带有效信息的基带信号。雷达系统使用 FPGA 进行实时处理，可以减少数字下变频的处理数据率。下图 展示了数字正交解调过程，模数转换器采样中频信号，得到离散的采样点，抽取后将其分成两路，分别和数字本振相乘，经过延时滤波修正相位后，通过低通滤波器输出解调后的基带信号。</p>
+<div style="font-size: 14px;text-align: center;"><img src="https://raw.githubusercontent.com/patrlean/images/main/4-1-4.png" width="100%/"></div>
+<p>使用 Matlab 进行正交解调的仿真。设置解调中频为 150MHz，将幅值比设为 1:2 的单频余弦信号，频率配置为 145MHz 和 155MHz，将两余弦信号叠加作为输入信号。满足的采样率有 600MHz、200MHz、120MHz。本系统的采样率是 200MHz，因此仿真时选择 200MHz 作为采样率。如下图所示为单频余弦信号叠加后在 200MHz 采样下的时域波形和频谱。带通采样会导致频谱延拓，在<br>
+会有对称的谱线。输入信号奇数点抽取成 I 路，偶数点抽取成 Q 路。然后符号修正，再通过延时滤波器和低通滤波器，输出零中频的基带 IQ 信号，如下图所示。IQ 重组成复信号后的频谱在5MHz 和5MHz 附近，因此方案具有可行性。</p>
+<div style="font-size: 14px;text-align: center;"><img src="https://raw.githubusercontent.com/patrlean/images/main/4-1-5.png" width="100%/"></div>
+<div style="font-size: 14px;text-align: center;"><img src="https://raw.githubusercontent.com/patrlean/images/main/4-1-6.png" width="100%/"></div>
+<h3><span id="413-动目标显示">4.1.3  动目标显示</span></h3>
+<p>雷达技术是多普勒效应的应用拓展，主要用来探测运动目标。现实环境中有大量静目标干扰，如建筑、树木、云层等，因此采用动目标显示(Moving target indicator，MTI)技术过滤杂波干扰。杂波频谱分布在零频和整数倍脉冲重频处，而动目标回波的频谱一般不分布在此两处。</p>
+<p>使用延迟线对消器实现 MTI 滤波器，下图是典型的延迟对消器：</p>
+<div style="font-size: 14px;text-align: center;"><img src="https://raw.githubusercontent.com/patrlean/images/main/4-1-7.png" width="50%/"></div>
+<p>使用 Matlab 进行对消器幅频特性仿真，如上图 所示为二脉冲至四脉冲对消器的幅频特性。凹口在零频和整数倍的重频处，起到抑制杂波的作用。延迟线越多，凹口越宽，则滤波器阻带越宽，对低速和杂波的抑制能力越强。</p>
+<div style="font-size: 14px;text-align: center;"><img src="https://raw.githubusercontent.com/patrlean/images/main/4-1-8.png" width="60%/"></div>
+<h3><span id="414-动目标检测">4.1.4 动目标检测</span></h3>
+<p>和动目标显示一样，动目标检测技术也是利用杂波 频谱和目标频谱的差异来进行检测。动目标显示滤除的主要是静目标的干扰，但是 MTI 滤波器通带内不平坦，滤除效果不理想，因此 MTI 主要用来滤除强杂波。MTD 采用了最优处理准则，通过多个带通滤波器组滤除回波中的杂波，使得滤波器组均匀分布，彼此相互重叠。</p>
+<p>使用 Matlab 仿真滤波器组性能，如图 2.15 所示，滤波器长度为 8，配置脉冲发射重频 250KHz，即 4us；覆盖多普勒频率[-125KHz,125KHz]。每个滤波器的中心频率在<br>
+等处。当 N越大，滤波器组间隔越小，得到的多普勒频移精度越高。再由 MTI 滤波器过滤掉静目标杂波，弥补滤波器组在零频和整数倍重频处对静目标的不敏感，由此提升雷达系统性能。</p>
+<div style="font-size: 14px;text-align: center;"><img src="https://raw.githubusercontent.com/patrlean/images/main/4-1-9.png" width="100%/"></div>
+<h3><span id="415恒虚警检测">4.1.5恒虚警检测</span></h3>
+<p>恒虚警(Constant False-Alarm Rate，CFAR)检测技术是雷达算法中一个重要的环节。的电磁环境中，接收到信号不止是目标信号，还存在大量干扰，当干扰变化时， 雷达如何保持恒定的虚警率，并从底噪中筛选出目标尤为重要。恒虚警检测包含虚警和漏警两个检测技术。虚警是指没有目标的时候判定杂波为目标的概率；漏警是指有目标的时候，判定为噪声的概率。系统中对漏警严格，对虚警宽松，即最大程度地探测出目标，保证雷达的探测性能。虚警率宽松产生的多目标问题可以在数据处理中滤除。</p>
+<p>CFAR 技术有固定门限检测器和自适应门限检测器。自适应门限检测器可以根据被检测单位内杂波幅值而灵活调整门限，具有很强的优越性，因此比固定门限检测器拥有更广的应用场景。自适应门限检测器又有单元平均 CFAR(CA-CFAR)检测器、选小CFAR(SO-CFAR)检测器、选大 CFAR(GO-CFAR)检测器等。噪声幅度服从瑞利分布，已知噪声平均功率后，设置一定门限可以降低漏警率。因此本系统采用典型的 CA-CFAR检测器，实现原理如下图：</p>
+<div style="font-size: 14px;text-align: center;"><img src="https://raw.githubusercontent.com/patrlean/images/main/4-1-10.png" width="100%/"></div>
+<h2><span id="42-基于fpga的系统实现">4.2 基于FPGA的系统实现</span></h2>
+<h3><span id="421-整机系统框架">4.2.1 整机系统框架</span></h3>
+<p>本文设计的系统由3个阵面组成，每个阵面的硬件实现相同，故下面介绍单个阵面的FPGA系统架构。</p>
+<p>单阵面、频综和信处板之间的发射接收连接如下图 所示。雷达工作可分为两部分，即波束辐射过程和波束接收过程。雷达开机后，处于待机状态，信处板返回呼吸状态包；上位机下发命令，主板首先接收到命令，然后转发给从板，两板解析包内要求的工作状态；当接收到启动命令后，信处板资源调度模块控制频综形成线性调频激励信号，通过波控控制阵面辐射方向，完成发射流程。</p>
+<p>发射完成后，阵面进入接收状态，开始接收反射回波，射频回波信号经过信道后混频到中频，信处板采样中频回波信号进行数字信号处理。解析回波中目标的距离、速度和角度等信息，从板将目标信息打包上传至主板，主板将目标信息打包上传至上位机，最后上传从板信息包。上位机完成数据处理过程，并在上位机显示端形成雷达扫描图。</p>
+<div style="font-size: 14px;text-align: center;"><img src="https://raw.githubusercontent.com/patrlean/images/main/4-2-1.png" width="100%/"></div>
+<h3><span id="422-信号处理框架">4.2.2 信号处理框架</span></h3>
+<p>整机框架设计完成之后，需要根据需求和指标完成具体流程划分。由 上面的指标参数可知，雷达系统有很高的数据率要求，因此不能将数据缓存后处理。FPGA 具有很大的集成度、很强的灵活性和可重构性；同时还具备并行处理能力，具有运算速度快、接口丰富等优势。使用 FPGA 完成雷达系统的信号处理过程，是非常合适的选择。本文雷达系统基于 FPGA 进行设计，单个信号处理系统如下图所示。</p>
+<div style="font-size: 14px;text-align: center;"><img src="https://raw.githubusercontent.com/patrlean/images/main/4-2-2.png" width="70%/"></div>
+<p>FPGA 底层逻辑单位由查找表和寄存器构成，特别适合做算法运算。可擦除可编程逻辑器件(Erasable Programmable Logic Device，EPLD)底层是与或阵列悬浮栅结构，适合做复杂的时序设计，因此使用 EPLD 完成资源调度任务。将算法与调度分开设计，增加系统的可重构性，扩展系统接口，方便系统升级。如上图 所示为单个信号处理板系统，其中 FPGA 主要承担算法运算包括带通采样、正交解调、数字下变频、脉冲压缩、动目标检测和恒虚警检测。除此之外还要配置模拟数字转换器(Analog Digital Converter，ADC)、配置静态随机存储器(Static Random Access Memory，SRAM)和 RGMII 通信。EPLD 主要承担资源调度、控制波束收发时序和频综阵面数据交互。</p>
+<h2><span id="43过程仿真">4.3过程仿真</span></h2>
+<p>我们使用matlab radar tool对我们设计的相控阵雷达进行仿真分析。</p>
+<p>雷达系统及参数设计的基础上，基于matlab radar tool对探鸟雷达搜索和跟踪目标的整个过程都进行仿真。采取搜索加跟踪的模式，搜索顺序是先在一个俯仰方向上搜索整个方位，再继续搜索下一个俯仰角度。仿真图如下图所示。</p>
+<div style="font-size: 14px;text-align: center;"><img src="https://raw.githubusercontent.com/patrlean/images/main/4-3-1.png" width="70%/"></div>
+<p>如图是扫描中的相控阵雷达波束。</p>
+<p>此时雷达波束的照射方向是俯仰上是-20°方向，方位上位于5°方向。由于目标与雷达波束不在同一方向上，此时雷达回波信号中未检测到目标。</p>
+<div style="font-size: 14px;text-align: center;"><img src="https://raw.githubusercontent.com/patrlean/images/main/4-3-2.png" width="70%/"></div>
+<p>此时雷达波束的照射方向是俯仰上是-15°方向，方位上位于0°方向。由于目标与雷达波束在同一方向上，此时雷达回波信号中检测到目标。检测到的目标如图所示，图中波束指向与目标处在同一直线上，雷达信号照射到目标。</p>
+<div style="font-size: 14px;text-align: center;"><img src="https://raw.githubusercontent.com/patrlean/images/main/4-3-3.png" width="70%/"></div>
+<p>此时雷达波束的照射方向是俯仰上是5°方向，方位上位于0°方向。由于目标与雷达波束在不同一方向上，此时雷达回波信号中不应检测到目标。但是由于雷达波束存在旁瓣等等干扰因素，此时雷达回波中经过目标反射得到的信号由图中的紫色波束表示。</p>
+<h2><span id="44可行性分析">4.4可行性分析</span></h2>
+<p>我们将雷达与AN /APG-77 雷达对比分析衡量可行性。</p>
+<p>AN /APG-77是安装在F-22 猛禽战斗机上的多功能低拦截概率雷达。该雷达由西屋公司和德州仪器公司设计并最初制造的一种固态、有源电子扫描阵列(AESA) 雷达。由 1956 个发射/接收模块组成。</p>
+<div class="image-container">
+<img src="https://raw.githubusercontent.com/patrlean/images/main/4-4-1.png">
+<img src="https://raw.githubusercontent.com/patrlean/images/main/4-4-2.png">
+</div>
+<p>而本文设计的雷达仅仅使用400个接收发射模块。在天线阵列数量上我们认为是可行的。同时本文使用的雷达体制与其相似。</p>
+<p>同时APG-77 提供 120° 的方位角和仰角视野。本文设计的雷达也能够提供120°的方位角视野，同时使用三面相控阵雷达达到360°的视野范围。</p>
+<p>APG-77 的工作范围为 160 公里，目标为反射截面积为一平方米。 而本文设计的雷达工作范围为5000m，目标的反射截面积为0.1平方米。</p>
+<p>总体来说本文设计的雷达是可行的。</p>
+<h1><span id="5总结">5.总结</span></h1>
+<p>我们讨论了机场鸟类探测相控阵雷达的相关内容。具体来说，我们介绍了相控阵天线的特点，讨论了相控阵天线的带宽限制和排布方式，以及天线方向图等等。总之，通过对相控阵雷达天线的研究，我们可以更好地了解相控阵雷达的性能特征，为相控阵雷达的设计与在机场鸟类探测方面提供指导。</p>
+<h1><span id="6参考文献">6参考文献</span></h1>
+<ol>
+<li>宋江勇,宋星飞,李儒宽.机场安全监测雷达系统综述[J].科技资讯,2020,18(11):6-7+9.DOI:10.16661/j.cnki.1672-3791.2020.11.006.</li>
+<li>熊建红. 探鸟雷达目标检测技术研究与FPGA实现[D].电子科技大学,2022.DOI:10.27005/d.cnki.gdzku.2022.003672.</li>
+<li>宋江勇,宋星飞,李儒宽.机场安全监测雷达系统综述[J].科技资讯,2020,18(11):6-7+9.DOI:10.16661/j.cnki.1672-3791.2020.11.006.</li>
+<li>陈唯实,黄毅峰,卢贤锋,张洁,陈小龙.基于探鸟雷达的机场周边鸟类目标数量估计[J].北京航空航天大学学报,2021,47(08):1533-1542.DOI:10.13700/j.bh.1001-5965.2020.0278.</li>
+<li>魏京天. 机场驱鸟系统的设计及实现[D].南京理工大学,2019.DOI:10.27241/d.cnki.gnjgu.2019.001071.</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/radar/" rel="tag"># radar</a>
+              <a href="/tags/%E8%AF%BE%E7%A8%8B%E8%AE%BE%E8%AE%A1/" rel="tag"># 课程设计</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/09/29/%E9%83%BD%E6%98%AF%E6%9E%81%E5%A5%BD%E7%9A%84%E7%85%A7%E7%89%87/" rel="prev" title="据有人说这都是极好的相片">
+      <i class="fa fa-chevron-left"></i> 据有人说这都是极好的相片
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/12/31/%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%932022/" rel="next" title="2022年终总结">
+      2022年终总结 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">写在前面</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">执行摘要</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">1.简介以及背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">2.研究目标|雷达战术指标</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.1.</span> <span class="nav-text">2.1、雷达工作参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.2.</span> <span class="nav-text">2.2、距离测量能力</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.3.</span> <span class="nav-text">2.4、角度分辨能力</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">3细节设计|雷达技术参数及雷达指标论证</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.1.</span> <span class="nav-text">3.1雷达基本架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.2.</span> <span class="nav-text">3.2雷达波形设计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.3.</span> <span class="nav-text">3.3雷达天线排布</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.4.</span> <span class="nav-text">3.4雷达天线方向图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.5.</span> <span class="nav-text">3.5雷达指标论证</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.6.</span> <span class="nav-text">3.6相控阵天线带宽限制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.7.</span> <span class="nav-text">3.7雷达功率设计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.8.</span> <span class="nav-text">3.8距离、速度、角度技术指标论证</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">6.</span> <span class="nav-text">4.信号处理仿真</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">6.1.</span> <span class="nav-text">4.1信号处理流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">6.1.1.</span> <span class="nav-text">4.1.1带通采样</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">6.1.2.</span> <span class="nav-text">4.1.2 正交解调</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">6.1.3.</span> <span class="nav-text">4.1.3  动目标显示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">6.1.4.</span> <span class="nav-text">4.1.4 动目标检测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">6.1.5.</span> <span class="nav-text">4.1.5恒虚警检测</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">6.2.</span> <span class="nav-text">4.2 基于FPGA的系统实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">6.2.1.</span> <span class="nav-text">4.2.1 整机系统框架</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">6.2.2.</span> <span class="nav-text">4.2.2 信号处理框架</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">6.3.</span> <span class="nav-text">4.3过程仿真</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">6.4.</span> <span class="nav-text">4.4可行性分析</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">7.</span> <span class="nav-text">5.总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">8.</span> <span class="nav-text">6参考文献</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Tianyou"
+      src="https://raw.githubusercontent.com/patrlean/images/main/avatar_selfie_new.jpg">
+  <p class="site-author-name" itemprop="name">Tianyou</p>
+  <div class="site-description" itemprop="description">三得利爱喝乌龙茶</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/patrlean" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;patrlean" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom github"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/349361858" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;349361858" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom bilibili"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:patriiicabis@gmail.com" title="E-Mail → mailto:patriiicabis@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom Email"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_44634406" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_44634406" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom CSDN"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://music.163.com/#/user/home?id=588410069" title="NetEase Cloud Music → https:&#x2F;&#x2F;music.163.com&#x2F;#&#x2F;user&#x2F;home?id&#x3D;588410069" rel="noopener" target="_blank"><i class="fa fa-fw fa-custom NetEaseCloudMusic"></i></a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tianyou</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">79k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">1:12</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力激情猛烈爆炸驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : '7JF3q74Xi62JMViy5Bhc3uqJ-MdYXbMMI',
+      appKey     : 'c9puHAmapHdRf9e83usdLViq',
+      placeholder: "hello!",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : 'https://7jf3q74x.api.lncldglobal.com'
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
